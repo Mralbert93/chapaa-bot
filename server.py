@@ -41,12 +41,7 @@ def get_next_sequence_value(sequence_name):
 
 # Get current time in Eastern
 def get_time():
-    global now
-    eastern_offset = timezone(timedelta(hours=-5))
-    now_utc = datetime.utcnow()
-    now_eastern = now_utc + timedelta(hours=-5) 
-    now = now_eastern.strftime('%I:%M %p')
-    return now
+    return (datetime.utcnow() + timedelta(hours=-5)).strftime('%I:%M %p')
 
 # Party class
 class Party:
@@ -105,7 +100,7 @@ class Party:
 async def edit_message(self, ctx, message_id: int):
     message = await ctx.channel.fetch_message(message_id)
     description = self.generate_description()
-    get_time()
+    now = get_time()
     embed = {
         "title": f"{self.Quantity}x {self.Type} Party",
         "description": description,
@@ -181,7 +176,7 @@ async def create(ctx: SlashContext, type: str, quantity: str, host: str, multi: 
 
     party = Party(ID=next_id, Type=type, Quantity=quantity, Host=host, Multi=multi, Roles=None)
     description = party.generate_description()
-    get_time()
+    now = get_time()
     embed = {
         "title": f"{party.Quantity}x {party.Type} Party",
         "description": description,
@@ -309,7 +304,7 @@ async def on_component(event: Component):
 async def repost(ctx: SlashContext, id: int):
     result = parties_collection.find_one({"ID": id})
     party = Party(ID=result['ID'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
-    get_time()
+    now = get_time()
     description = party.generate_description()
     embed = {
         "title": f"{party.Quantity}x {party.Type} Party",
