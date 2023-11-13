@@ -86,6 +86,11 @@ PartyTypeInfo = {
     }
 }
 
+SUPPORTED_PARTY_TYPES = set(PartyTypeInfo.keys())
+
+def get_supported_party_types():
+    return SUPPORTED_PARTY_TYPES
+
 def get_roles_list(party_type):
     return list(PartyTypeInfo.get(party_type, {}).get("Roles", {}).keys())
 
