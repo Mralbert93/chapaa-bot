@@ -394,7 +394,7 @@ async def close(ctx: SlashContext, id: int):
     party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
 
     if result['Status'] == "Closed":
-        error_message = await ctx.send(f"The party has already been closed and participation has already been recorded.")
+        error_message = await ctx.send(f"Error: The party has already been closed and participation has already been recorded.")
         await asyncio.sleep(3)
         await error_message.delete()
         return
@@ -425,8 +425,8 @@ async def close(ctx: SlashContext, id: int):
 
     oldchannel = bot.get_channel(party.ChannelID)
     target_message = await oldchannel.fetch_message(party.MessageID)
-    await target_message.edit(embed=embed,components=None)
-    confirmation = await ctx.send(f"Error: The party has been closed and participation has been recorded.")
+    await target_message.edit(embed=embed,components=[])
+    confirmation = await ctx.send(f"The party has been closed and participation has been recorded.")
     await asyncio.sleep(3)
     await confirmation.delete()
 
