@@ -404,6 +404,7 @@ async def close(ctx: SlashContext, id: int):
         for role in role_list:
             if role != "Open" and role not in user_list:
                 users_collection.update_one({"ID": role}, {"$push": {"Parties": party.ID}},upsert=True)
+                user_list.append(role)
     
     party.Status = "Closed"
     parties_collection.update_one({"ID": id},{"$set": {"Status": "Closed"}})
