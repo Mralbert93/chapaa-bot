@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 from interactions import Client, Intents, listen, slash_command, SlashContext, OptionType, slash_option, ActionRow, Button, ButtonStyle, StringSelectMenu
 from interactions.api.events import Component
 import os
-from party_type import PartyTypeInfo, get_roles_list, resolve_party_type
+from party_type import PartyTypeInfo, get_roles_list, resolve_party_type, get_supported_party_types
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
@@ -167,7 +167,8 @@ async def create(ctx: SlashContext, type: str, quantity: str, host: str, multi: 
     if resolved_party_type:
         type = resolved_party_type
     else:
-        error_post = await ctx.send(f"<@{ctx.author.id}>, sorry {type} party type is not supported.\nThe following party types are currently supported: Bouillabaisse, Celebration Cake, Chili Oil Dumpling, Crab Pot Pie.")
+        supported_types_str = ', '.join(get_supported_party_types())
+        error_post = await ctx.send(f"<@{ctx.author.id}>, sorry {type} party type is not supported.\nThe following party types are currently supported: {supported_types_str}")
         await asyncio.sleep(30)
         await error_post.delete()
         return
