@@ -23,9 +23,10 @@ try:
 except Exception as e:
     print(e)
 
-# Set database and collection
+# Set database and collections
 db = mongo.chapaa
 parties_collection = db["parties"]
+users_collection = db["users"]
 
 # Create a sequence collection
 sequence_collection = db['sequence']
@@ -45,8 +46,9 @@ def get_time():
 
 # Party class
 class Party:
-    def __init__(self, ID, Type, Quantity, Host, Multi=None,Roles=None, MessageID=None, ChannelID=None, Responses=None, **kwargs):
+    def __init__(self, ID, Status, Type, Quantity, Host, Multi=None,Roles=None, MessageID=None, ChannelID=None, Responses=None, **kwargs):
         self.ID = ID
+        self.Status = Status if Status is not None else "Open"
         self.Type = Type
         self.Quantity = Quantity
         self.Host = Host
@@ -58,7 +60,7 @@ class Party:
         self.Responses = Responses if Responses is not None else []
 
     def __str__(self):
-        return f"Party(ID={self.ID}, Type={self.Type}, Quantity={self.Quantity}, Host={self.Host}, Multi={self.Multi}, Roles={self.Roles}, MessageID={self.MessageID}, ChannelID={self.ChannelID}, Responses={self.Responses})"
+        return f"Party(ID={self.ID}, Status={self.Status}, Type={self.Type}, Quantity={self.Quantity}, Host={self.Host}, Multi={self.Multi}, Roles={self.Roles}, MessageID={self.MessageID}, ChannelID={self.ChannelID}, Responses={self.Responses})"
     
     def get_party_type(Type):
         return PartyTypeInfo.get(Type, {})
@@ -102,7 +104,7 @@ async def edit_message(self, ctx, message_id: int):
     description = self.generate_description()
     now = get_time()
     embed = {
-        "title": f"{self.Quantity}x {self.Type} Party",
+        "title": f"{self.Quantity}x {self.Type} Party - {self.Status}",
         "description": description,
         "thumbnail": {
             "url": PartyTypeInfo.get(self.Type, {}).get("Image", ""),
@@ -175,11 +177,11 @@ async def create(ctx: SlashContext, type: str, quantity: str, host: str, multi: 
     
     next_id = get_next_sequence_value('item_id')
 
-    party = Party(ID=next_id, Type=type, Quantity=quantity, Host=host, Multi=multi, Roles=None)
+    party = Party(ID=next_id, Status="Open", Type=type, Quantity=quantity, Host=host, Multi=multi, Roles=None)
     description = party.generate_description()
     now = get_time()
     embed = {
-        "title": f"{party.Quantity}x {party.Type} Party",
+        "title": f"{party.Quantity}x {party.Type} Party - {party.Status}",
         "description": description,
         "thumbnail": {
             "url": PartyTypeInfo.get(party.Type, {}).get("Image", ""),
@@ -212,6 +214,7 @@ async def create(ctx: SlashContext, type: str, quantity: str, host: str, multi: 
 
     party_data = {
         "ID": party.ID,
+        "Status": party.Status,
         "Type": party.Type,
         "Quantity": party.Quantity,
         "Host": party.Host,
@@ -234,15 +237,15 @@ async def on_component(event: Component):
         nonlocal party
         if action == "signup":
             result = parties_collection.find_one({"MessageID": message_id})
-            party = Party(ID=result['ID'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
+            party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
             return party
         if action == "unsignup":
             result = parties_collection.find_one({"MessageID": message_id})
-            party = Party(ID=result['ID'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
+            party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
             return party
         elif action == "role":
             result = parties_collection.find_one({"Responses": {"$elemMatch": {"$eq": message_id}}})
-            party = Party(ID=result['ID'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
+            party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
             return party
         
     async def set_deleted():
@@ -304,11 +307,11 @@ async def on_component(event: Component):
 )
 async def repost(ctx: SlashContext, id: int):
     result = parties_collection.find_one({"ID": id})
-    party = Party(ID=result['ID'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
+    party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
     now = get_time()
     description = party.generate_description()
     embed = {
-        "title": f"{party.Quantity}x {party.Type} Party",
+        "title": f"{party.Quantity}x {party.Type} Party - {party.Status}",
         "description": description,
         "thumbnail": {
             "url": PartyTypeInfo.get(party.Type, {}).get("Image", ""),
@@ -361,7 +364,7 @@ async def notify(ctx: SlashContext, id: int):
     user_list = []
 
     result = parties_collection.find_one({"ID": id})
-    party = Party(ID=result['ID'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
+    party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
 
 
     for role_list in party.Roles.values():
@@ -372,6 +375,60 @@ async def notify(ctx: SlashContext, id: int):
     user_list_str = ', '.join(user_list)               
 
     await ctx.send(f"The party is starting now! Please add **{party.Host}** in game and report to their house. {user_list_str}")
+
+# Close command
+@slash_command(
+        name="party",
+        description="Used to manage Palia parties",
+        sub_cmd_name="close",
+        sub_cmd_description="Close a party and record user participation",
+)
+@slash_option(
+    name="id",
+    description="ID of party",
+    required=True,
+    opt_type=OptionType.INTEGER
+)
+async def close(ctx: SlashContext, id: int):
+    result = parties_collection.find_one({"ID": id})
+    party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
+
+    if result['Status'] == "Closed":
+        error_message = await ctx.send(f"The party has already been closed and participation has already been recorded.")
+        await asyncio.sleep(3)
+        await error_message.delete()
+        return
+    
+    user_list = []
+    for role_list in party.Roles.values():
+        for role in role_list:
+            if role != "Open" and role not in user_list:
+                users_collection.update_one({"ID": role}, {"$push": {"Parties": party.ID}},upsert=True)
+    
+    party.Status = "Closed"
+    parties_collection.update_one({"ID": id},{"$set": {"Status": "Closed"}})
+
+    description = party.generate_description()
+    now = get_time()
+    embed = {
+        "title": f"{party.Quantity}x {party.Type} Party - {party.Status}",
+        "description": description,
+        "thumbnail": {
+            "url": PartyTypeInfo.get(party.Type, {}).get("Image", ""),
+            "height": 0,
+            "width": 0
+        },
+        "footer": {
+            "text": f"ID: {party.ID} • Last updated at {now} Eastern"
+        }
+    }
+
+    oldchannel = bot.get_channel(party.ChannelID)
+    target_message = await oldchannel.fetch_message(party.MessageID)
+    await target_message.edit(embed=embed,components=None)
+    confirmation = await ctx.send(f"Error: The party has been closed and participation has been recorded.")
+    await asyncio.sleep(3)
+    await confirmation.delete()
 
 # Bot is ready
 @listen()
