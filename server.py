@@ -45,12 +45,13 @@ def get_time():
 
 # Party class
 class Party:
-    def __init__(self, ID, Status, Type, Quantity, Host, Multi=None,Roles=None, MessageID=None, ChannelID=None, Responses=None, **kwargs):
+    def __init__(self, ID, Status, Type, Quantity, Host, Time=None, Multi=None,Roles=None, MessageID=None, ChannelID=None, Responses=None, **kwargs):
         self.ID = ID
         self.Status = Status if Status is not None else "Open"
         self.Type = Type
         self.Quantity = Quantity
         self.Host = Host
+        self.Time = Time
         self.Multi = Multi if Multi is not None else True
         self.Roles = Roles if Roles is not None else PartyTypeInfo[Type]["Roles"]
         self.Roles.update(kwargs)
@@ -59,7 +60,7 @@ class Party:
         self.Responses = Responses if Responses is not None else []
 
     def __str__(self):
-        return f"Party(ID={self.ID}, Status={self.Status}, Type={self.Type}, Quantity={self.Quantity}, Host={self.Host}, Multi={self.Multi}, Roles={self.Roles}, MessageID={self.MessageID}, ChannelID={self.ChannelID}, Responses={self.Responses})"
+        return f"Party(ID={self.ID}, Status={self.Status}, Type={self.Type}, Quantity={self.Quantity}, Host={self.Host}, Time={self.Time}, Multi={self.Multi}, Roles={self.Roles}, MessageID={self.MessageID}, ChannelID={self.ChannelID}, Responses={self.Responses})"
     
     def get_party_type(Type):
         return PartyTypeInfo.get(Type, {})
@@ -85,7 +86,12 @@ class Party:
                return role
            
     def generate_description(self):
-        description = f"Hosted by {self.Host}\n\n"
+        description = f"Hosted by {self.Host}\n"
+        
+        if self.Time is not None:
+            description += f"Start Time: <t:{self.Time}>\n\n"
+        else:
+            description += "\n"
         
         required_ingredients = PartyTypeInfo.get(self.Type, {}).get("Ingredients", {})
 
@@ -103,7 +109,7 @@ async def edit_message(self, ctx, message_id: int):
     description = self.generate_description()
     now = get_time()
     embed = {
-        "title": f"{self.Quantity}x {self.Type} Party - {self.Status}",
+        "title": f"{{{self.Status}}} {self.Quantity}x {self.Type} Party",
         "description": description,
         "thumbnail": {
             "url": PartyTypeInfo.get(self.Type, {}).get("Image", ""),
@@ -156,12 +162,18 @@ async def edit_message(self, ctx, message_id: int):
     opt_type=OptionType.STRING
 )
 @slash_option(
+    name="time",
+    description="Party's planned start time (use https://www.unixtimestamp.com)",
+    required=False,
+    opt_type=OptionType.INTEGER
+)
+@slash_option(
     name="multi",
     description="Whether player can have multiple roles (true/false)",
     required=False,
     opt_type=OptionType.BOOLEAN
 )
-async def create(ctx: SlashContext, type: str, quantity: str, host: str, multi: bool = True):
+async def create(ctx: SlashContext, type: str, quantity: str, host: str, time: int = None, multi: bool = True):
     global party
 
     resolved_party_type = resolve_party_type(type)
@@ -176,11 +188,11 @@ async def create(ctx: SlashContext, type: str, quantity: str, host: str, multi: 
     
     next_id = get_next_sequence_value('item_id')
 
-    party = Party(ID=next_id, Status="Open", Type=type, Quantity=quantity, Host=host, Multi=multi, Roles=None)
+    party = Party(ID=next_id, Status="Open", Type=type, Quantity=quantity, Host=host, Time=time, Multi=multi, Roles=None)
     description = party.generate_description()
     now = get_time()
     embed = {
-        "title": f"{party.Quantity}x {party.Type} Party - {party.Status}",
+        "title": f"{{{party.Status}}} {party.Quantity}x {party.Type} Party",
         "description": description,
         "thumbnail": {
             "url": PartyTypeInfo.get(party.Type, {}).get("Image", ""),
@@ -217,6 +229,7 @@ async def create(ctx: SlashContext, type: str, quantity: str, host: str, multi: 
         "Type": party.Type,
         "Quantity": party.Quantity,
         "Host": party.Host,
+        "Time": party.Time,
         "Multi": party.Multi,
         "Roles": party.Roles,
         "MessageID": party.MessageID,
@@ -236,15 +249,15 @@ async def on_component(event: Component):
         nonlocal party
         if action == "signup":
             result = parties_collection.find_one({"MessageID": message_id})
-            party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
+            party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Time=result['Time'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
             return party
         if action == "unsignup":
             result = parties_collection.find_one({"MessageID": message_id})
-            party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
+            party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Time=result['Time'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
             return party
         elif action == "role":
             result = parties_collection.find_one({"Responses": {"$elemMatch": {"$eq": message_id}}})
-            party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
+            party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Time=result['Time'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
             return party
         
     async def set_deleted():
@@ -310,11 +323,11 @@ async def on_component(event: Component):
 )
 async def repost(ctx: SlashContext, id: int):
     result = parties_collection.find_one({"ID": id})
-    party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
+    party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Time=result['Time'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
     now = get_time()
     description = party.generate_description()
     embed = {
-        "title": f"{party.Quantity}x {party.Type} Party - {party.Status}",
+        "title": f"{{{party.Status}}} {party.Quantity}x {party.Type} Party",
         "description": description,
         "thumbnail": {
             "url": PartyTypeInfo.get(party.Type, {}).get("Image", ""),
@@ -367,7 +380,7 @@ async def notify(ctx: SlashContext, id: int):
     user_list = []
 
     result = parties_collection.find_one({"ID": id})
-    party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
+    party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Time=result['Time'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
 
 
     for role_list in party.Roles.values():
@@ -394,7 +407,7 @@ async def notify(ctx: SlashContext, id: int):
 )
 async def close(ctx: SlashContext, id: int):
     result = parties_collection.find_one({"ID": id})
-    party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
+    party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Time=result['Time'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
 
     if result['Status'] == "Closed":
         error_message = await ctx.send(f"Error: The party has already been closed and participation has already been recorded.")
@@ -415,7 +428,7 @@ async def close(ctx: SlashContext, id: int):
     description = party.generate_description()
     now = get_time()
     embed = {
-        "title": f"{party.Quantity}x {party.Type} Party - {party.Status}",
+        "title": f"{{{party.Status}}} {party.Quantity}x {party.Type} Party",
         "description": description,
         "thumbnail": {
             "url": PartyTypeInfo.get(party.Type, {}).get("Image", ""),
