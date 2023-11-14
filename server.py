@@ -295,7 +295,6 @@ async def on_component(event: Component):
             await leaderboard(ctx)
             await ctx.message.delete()
 
-
 # Repost command
 @slash_command(
         name="party",
