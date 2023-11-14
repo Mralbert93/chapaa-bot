@@ -19,6 +19,16 @@ PartyTypeInfo = {
         },
         "Image": "https://palia.wiki.gg/images/9/9d/Bouillabaisse.png"
     },
+    "Bug Catching": {
+        "Aliases": ["bug", "catching"],
+        "Roles": {
+            "Catcher": ["Open"]*10,
+        },
+        "Ingredients": {
+            "Catcher": "Smoke Bombs, Honey Lure (Optional)"
+        },
+        "Image": "https://palia.wiki.gg/images/thumb/4/47/Currency_Bug.png/75px-Currency_Bug.png"
+    },
     "Celebration Cake": {
         "Aliases": ["celebration", "cake", "cakes"],
         "Roles": {
@@ -83,6 +93,44 @@ PartyTypeInfo = {
             "Overprep": "Any ingredient above"
         },
         "Image": "https://palia.wiki.gg/images/c/c3/Crab_Pot_Pie.png"
+    },
+    "Fishing": {
+        "Aliases": ["fish", "fishing"],
+        "Roles": {
+            "Fisher": ["Open"]*10,
+        },
+        "Ingredients": {
+            "Fisher": ":worm: Any Worms (Optional)"
+        },
+        "Image": "https://palia.wiki.gg/images/thumb/9/97/Currency_Fishing.png/75px-Currency_Fishing.png"
+    },
+    "Foraging": {
+        "Aliases": ["foraging", "chopping", "chop", "woodcut"],
+        "Roles": {
+            "Forager": ["Open"]*10,
+        },
+        "Ingredients": {
+        },
+        "Image": "https://palia.wiki.gg/images/thumb/b/b0/Currency_Foraging.png/75px-Currency_Foraging.png"
+    },
+    "Hunting": {
+        "Aliases": ["hunt", "hunting"],
+        "Roles": {
+            "Hunter": ["Open"]*10,
+        },
+        "Ingredients": {
+            "Hunter": ":bow_and_arrow: Arrows"
+        },
+        "Image": "https://palia.wiki.gg/images/thumb/8/8b/Currency_Hunting.png/75px-Currency_Hunting.png"
+    },
+    "Mining": {
+        "Aliases": ["mine", "miner", "mining"],
+        "Roles": {
+            "Miner": ["Open"]*10,
+        },
+        "Ingredients": {
+        },
+        "Image": "https://palia.wiki.gg/images/thumb/9/97/Currency_Fishing.png/75px-Currency_Fishing.png"
     }
 }
 
