@@ -6,6 +6,7 @@ import os
 from party_type import PartyTypeInfo, get_roles_list, resolve_party_type, get_supported_party_types
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
+from tabulate import tabulate
 
 
 # Set environment variables
@@ -292,6 +293,11 @@ async def on_component(event: Component):
             await asyncio.sleep(1)
             await confirmation.delete()
 
+        case "refresh":
+            await leaderboard(ctx)
+            await ctx.message.delete()
+
+
 # Repost command
 @slash_command(
         name="party",
@@ -430,6 +436,66 @@ async def close(ctx: SlashContext, id: int):
     confirmation = await ctx.send(f"The party has been closed and participation has been recorded.")
     await asyncio.sleep(3)
     await confirmation.delete()
+
+# Leaderboard command
+@slash_command(
+        name="party",
+        description="Used to manage Palia parties",
+        sub_cmd_name="leaderboard",
+        sub_cmd_description="Display leaderboard for party participants",
+)
+async def leaderboard(ctx: SlashContext):
+    pipeline = [
+        {
+            "$project": {
+                "ID": 1,
+                "partyCount": {"$size": {"$ifNull": ["$Parties", []]}}
+            }
+        },
+        {
+            "$sort": {"partyCount": -1}
+        },
+        {
+            "$limit": 10
+        }
+    ]
+
+    result = list(users_collection.aggregate(pipeline))
+
+    description = ""
+    for index, user in enumerate(result, start=1):
+        username = user['ID']
+        if user['partyCount'] == 1:
+            partyCount = f"{user['partyCount']} party"
+        else:
+            partyCount = f"{user['partyCount']} parties"
+        description += "#{:<2} - {} - {:<10}\n".format(index, username, partyCount)
+
+    now = get_time()
+    embed = {
+        "title": f"Party Leaderboard",
+        "description": description,
+        "thumbnail": {
+            "url": "https://pngimg.com/uploads/golden_cup/golden_cup_PNG94626.png",
+            "height": 0,
+            "width": 0
+        },
+        "footer": {
+            "text": f"Last updated at {now} Eastern"
+        }
+    }
+
+    components: list[ActionRow] = [
+        ActionRow(
+            Button(
+                style=ButtonStyle.GREEN,
+                label="Refresh",
+                custom_id="refresh",
+            )
+        )
+    ]
+
+    posting = await ctx.send(embed=embed,components=components)
 
 # Bot is ready
 @listen()
