@@ -16,6 +16,11 @@ The bot has the following slash commands:
 `/party notify` - notify users that party is starting
 - id (Required) - ID of party
 
+`/party close` - closes a party and records user participation
+- id (Required) - ID of party
+
+`/party leaderboard` - displays leaderboard for party participation
+
 The currently supported party types are:
 - Apple Cake
 - Chili Oil Dumpling
