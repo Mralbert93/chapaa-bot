@@ -6,8 +6,6 @@ import os
 from party_type import PartyTypeInfo, get_roles_list, resolve_party_type, get_supported_party_types
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
-from tabulate import tabulate
-
 
 # Set environment variables
 token= os.environ.get("DISCORD_TOKEN")
