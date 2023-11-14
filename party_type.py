@@ -130,7 +130,7 @@ PartyTypeInfo = {
         },
         "Ingredients": {
         },
-        "Image": "https://palia.wiki.gg/images/thumb/9/97/Currency_Fishing.png/75px-Currency_Fishing.png"
+        "Image": "https://palia.wiki.gg/images/thumb/b/b0/Currency_Mining.png/75px-Currency_Mining.png"
     }
 }
 
