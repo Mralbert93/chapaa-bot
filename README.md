@@ -20,6 +20,7 @@ The bot has the following slash commands:
 - id (Required) - ID of party
 
 `/party leaderboard` - displays leaderboard for party participation
+- number (Required) - Number of places to display (Max 25)
 
 The currently supported party types are:
 - Cooking
