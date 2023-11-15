@@ -452,7 +452,7 @@ async def close(ctx: SlashContext, id: int):
         name="party",
         description="Used to manage Palia parties",
         sub_cmd_name="leaderboard",
-        sub_cmd_description="Display leaderboard for party participants",
+        sub_cmd_description="Display leaderboard for party participation",
 )
 @slash_option(
     name="number",
