@@ -452,9 +452,17 @@ async def close(ctx: SlashContext, id: int):
         name="party",
         description="Used to manage Palia parties",
         sub_cmd_name="leaderboard",
-        sub_cmd_description="Display leaderboard for party participation",
+        sub_cmd_description="Display leaderboard for party participants",
 )
-async def leaderboard(ctx: SlashContext):
+@slash_option(
+    name="number",
+    description="Number of places to display (Max 25)",
+    required=True,
+    opt_type=OptionType.INTEGER
+)
+
+async def leaderboard(ctx: SlashContext, number: int = 10):
+    if number > 25: number = 25
     pipeline = [
         {
             "$project": {
@@ -466,20 +474,23 @@ async def leaderboard(ctx: SlashContext):
             "$sort": {"partyCount": -1}
         },
         {
-            "$limit": 10
+            "$limit": number
         }
     ]
 
     result = list(users_collection.aggregate(pipeline))
 
-    description = ""
+    description = "\n\u200b"
     for index, user in enumerate(result, start=1):
         username = user['ID']
         if user['partyCount'] == 1:
-            partyCount = f"{user['partyCount']} party"
+            partyCount = f"{user['partyCount']} Party"
         else:
-            partyCount = f"{user['partyCount']} parties"
-        description += "#{:<2} - {} - {:<10}\n".format(index, username, partyCount)
+            partyCount = f"{user['partyCount']} Parties"
+        if index != len(result):
+            description += "#{} - {} - {}\n\u200b".format(index, username, partyCount)
+        else:
+            description += "#{} - {} - {}".format(index, username, partyCount)
 
     now = get_time()
     embed = {
