@@ -1,6 +1,6 @@
 import asyncio
 from datetime import datetime, timedelta, timezone
-from interactions import Client, Intents, listen, slash_command, SlashContext, OptionType, slash_option, ActionRow, Button, ButtonStyle, StringSelectMenu
+from interactions import Client, Intents, listen, slash_command, SlashContext, OptionType, slash_option, ActionRow, Button, ButtonStyle, StringSelectMenu, Guild
 from interactions.api.events import Component
 import os
 from party_type import PartyTypeInfo, get_roles_list, resolve_party_type, get_supported_party_types
@@ -518,10 +518,30 @@ async def leaderboard(ctx: SlashContext, number: int = 10):
 
     posting = await ctx.send(embed=embed,components=components)
 
+@listen()
+async def on_message_create(event):
+    if event.message.author.bot:
+        return
+    users_collection.update_one({"ID": f"<@{event.message.author.id}>"}, {'$inc': {'MessageCount':1}}, upsert=True)
+
+async def check_voice_loop():
+    while True:
+        await check_channels()
+        await asyncio.sleep(60)
+
+async def check_channels():
+    for guild in bot.guilds:
+        for channel in guild.channels:
+            if channel.type == 2:
+                voice_member_ids = getattr(channel, '_voice_member_ids', [])
+                for member_id in voice_member_ids:
+                    users_collection.update_one({"ID": f"<@{member_id}>"}, {'$inc': {'VoiceMins':1}}, upsert=True)
+
 # Bot is ready
 @listen()
 async def on_startup():
     print("Bot is ready and online!")
+    await check_voice_loop()
 
 # Start bot
 bot.start(token)
