@@ -19,8 +19,8 @@ The bot has the following slash commands:
 `/party close` - closes a party and records user participation
 - id (Required) - ID of party
 
-`/party leaderboard` - displays leaderboard for party participation
-- number (Required) - Number of places to display (Max 25)
+`/leaderboard` - displays leaderboard for text, voice, and party participation
+- number (Required) - Number of places to display (Max 10)
 
 The currently supported party types are:
 - Cooking
