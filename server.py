@@ -451,7 +451,7 @@ async def close(ctx: SlashContext, id: int):
 # Leaderboard command
 @slash_command(
         name="leaderboard",
-        description="Displays leaderboard for party participation, text activity, and voice activity.",
+        description="Displays leaderboard for party participation",
 )
 @slash_option(
     name="number",
@@ -461,7 +461,7 @@ async def close(ctx: SlashContext, id: int):
 )
 
 async def leaderboard(ctx: SlashContext, number: int = 10):
-    if number > 10: number = 10
+    if number > 20: number = 20
     pipeline = [
         {
             "$project": {
@@ -478,28 +478,29 @@ async def leaderboard(ctx: SlashContext, number: int = 10):
     ]
 
     party_result = list(users_collection.aggregate(pipeline))
-    text_result = list(users_collection.find({}, {"ID":1, "MessageCount": 1}).sort("MessageCount",pymongo.DESCENDING).limit(number))
-    voice_result = list(users_collection.find({}, {"ID":1, "VoiceMins": 1}).sort("VoiceMins",pymongo.DESCENDING).limit(number))
+    # text_result = list(users_collection.find({}, {"ID":1, "MessageCount": 1}).sort("MessageCount",pymongo.DESCENDING).limit(number))
+    # voice_result = list(users_collection.find({}, {"ID":1, "VoiceMins": 1}).sort("VoiceMins",pymongo.DESCENDING).limit(number))
     
-    description = "**Text**\n\u200b"
-    for index, user in enumerate(text_result, start = 1):
-        username = user['ID']
-        messageCount = f"{user['MessageCount']} messages"
-        if index != len(text_result):
-            description += "#{} - {} - {}\n\u200b".format(index, username, messageCount)
-        else:
-            description += "#{} - {} - {}".format(index, username, messageCount)
+    # description = "**Text**\n\u200b"
+    # for index, user in enumerate(text_result, start = 1):
+    #     username = user['ID']
+    #     messageCount = f"{user['MessageCount']} messages"
+    #     if index != len(text_result):
+    #         description += "#{} - {} - {}\n\u200b".format(index, username, messageCount)
+    #     else:
+    #         description += "#{} - {} - {}".format(index, username, messageCount)
     
-    description += "\n\n**Voice**\n\u200b"
-    for index, user in enumerate(voice_result, start = 1):
-        username = user['ID']
-        voiceMins = f"{user['VoiceMins']} minutes"
-        if index != len(voice_result):
-            description += "#{} - {} - {}\n\u200b".format(index, username, voiceMins)
-        else:
-            description += "#{} - {} - {}".format(index, username, voiceMins)
+    # description += "\n\n**Voice**\n\u200b"
+    # for index, user in enumerate(voice_result, start = 1):
+    #     username = user['ID']
+    #     voiceMins = user['VoiceMins']
+    #     voiceHours = voiceMins
+    #     if index != len(voice_result):
+    #         description += "#{} - {} - {}\n\u200b".format(index, username, voiceMins)
+    #     else:
+    #         description += "#{} - {} - {}".format(index, username, voiceMins)
 
-    description += "**\n\nParty**\n\u200b"
+    description = ""
     for index, user in enumerate(party_result, start=1):
         username = user['ID']
         if user['partyCount'] == 1:
@@ -513,7 +514,7 @@ async def leaderboard(ctx: SlashContext, number: int = 10):
 
     now = get_time()
     embed = {
-        "title": f"Leaderboard",
+        "title": f"Party Leaderboard",
         "description": description,
         "thumbnail": {
             "url": "https://pngimg.com/uploads/golden_cup/golden_cup_PNG94626.png",
