@@ -1,4 +1,23 @@
 PartyTypeInfo = {
+    "Apple Pie": {
+        "Aliases": ["apple", "apples"],
+        "Roles": {
+            "Starter": ["Open"],
+            "Apple": ["Open"],
+            "Sprouts": ["Open"],
+            "Leafer": ["Open"],
+            "Dough": ["Open"],
+            "Filler": ["Open"]
+        },
+        "Ingredients": {
+            "Starter": ":butter: Butter",
+            "Apple": ":apple: 3x Apple",
+            "Sprouts": "Spice Sprouts",
+            "Leafer": ":leaves: Sweet Leaves",
+            "Dough": "<:wheat:1172680400276029541> Wheat",
+        },
+        "Image": "https://palia.wiki.gg/images/f/fb/Apple_Pie.png"
+    },
     "Bouillabaisse": {
         "Aliases": ["bouillabaisse", "bouil"],
         "Roles": {
