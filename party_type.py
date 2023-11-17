@@ -1,6 +1,6 @@
 PartyTypeInfo = {
     "Apple Pie": {
-        "Aliases": ["apple", "apples"],
+        "Aliases": ["apple pie"],
         "Roles": {
             "Starter": ["Open"],
             "Apple": ["Open"],
