@@ -177,6 +177,13 @@ async def edit_message(self, ctx, message_id: int):
 async def create(ctx: SlashContext, type: str, quantity: str, host: str, time: int = None, multi: bool = True):
     global party
 
+    if ctx.channel.parent_channel.name != "palia-parties":
+        print(ctx.channel.parent_channel.name)
+        error_post = await ctx.send(f"<@{ctx.author.id}>, please use #palia-parties channel to post parties.")
+        await asyncio.sleep(30)
+        await error_post.delete()
+        return
+
     resolved_party_type = resolve_party_type(type)
     if resolved_party_type:
         type = resolved_party_type
@@ -221,6 +228,7 @@ async def create(ctx: SlashContext, type: str, quantity: str, host: str, time: i
     ]
 
     posting = await ctx.send(embed=embed,components=components)
+    await ctx.channel.edit(name=f"{{{party.Status}}} {party.Quantity}x {party.Type} Party")
     party.MessageID = posting.id
     party.ChannelID = posting.channel.id
 
@@ -309,61 +317,6 @@ async def on_component(event: Component):
             await leaderboard(ctx)
             await ctx.message.delete()
 
-# Repost command
-@slash_command(
-        name="party",
-        description="Used to manage Palia parties",
-        sub_cmd_name="repost",
-        sub_cmd_description="Reposts current Palia Party",
-)
-@slash_option(
-    name="id",
-    description="ID of party",
-    required=True,
-    opt_type=OptionType.INTEGER
-)
-async def repost(ctx: SlashContext, id: int):
-    result = parties_collection.find_one({"ID": id})
-    party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Time=result['Time'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
-    now = get_time()
-    description = party.generate_description()
-    embed = {
-        "title": f"{{{party.Status}}} {party.Quantity}x {party.Type} Party",
-        "description": description,
-        "thumbnail": {
-            "url": PartyTypeInfo.get(party.Type, {}).get("Image", ""),
-            "height": 0,
-            "width": 0
-        },
-        "footer": {
-            "text": f"ID: {party.ID} • Last updated at {now} Eastern"
-        }
-    }
-
-    components: list[ActionRow] = [
-        ActionRow(
-            Button(
-                style=ButtonStyle.GREEN,
-                label="Sign Up",
-                custom_id="signup",
-            ),
-            Button(
-                style=ButtonStyle.RED,
-                label="Unsign Up",
-                custom_id="unsignup",
-            )
-        )
-    ]
-
-    oldchannel = bot.get_channel(party.ChannelID)
-    target_message = await oldchannel.fetch_message(party.MessageID)
-    await target_message.delete()
-    
-    posting = await ctx.send(embed=embed,components=components)
-    party.MessageID = posting.id
-    party.ChannelID = posting.channel.id
-    parties_collection.update_one({"ID": party.ID}, {"$set":{"MessageID": party.MessageID,"ChannelID": party.ChannelID}})
-
 # Notify command
 @slash_command(
         name="party",
@@ -444,9 +397,9 @@ async def close(ctx: SlashContext, id: int):
     oldchannel = bot.get_channel(party.ChannelID)
     target_message = await oldchannel.fetch_message(party.MessageID)
     await target_message.edit(embed=embed,components=[])
-    confirmation = await ctx.send(f"The party has been closed and participation has been recorded.")
-    await asyncio.sleep(3)
-    await confirmation.delete()
+    await ctx.channel.edit(name=f"{{{party.Status}}} {party.Quantity}x {party.Type} Party",)
+    confirmation = await ctx.send(f"The party has finished and participation has been recorded :partying_face:")
+    await ctx.channel.edit(locked=True)
 
 # Leaderboard command
 @slash_command(
@@ -481,7 +434,7 @@ async def leaderboard(ctx: SlashContext, number: int = 10):
     # text_result = list(users_collection.find({}, {"ID":1, "MessageCount": 1}).sort("MessageCount",pymongo.DESCENDING).limit(number))
     # voice_result = list(users_collection.find({}, {"ID":1, "VoiceMins": 1}).sort("VoiceMins",pymongo.DESCENDING).limit(number))
     
-    # description = "**Text**\n\u200b"
+    # description = "\n\u200b"
     # for index, user in enumerate(text_result, start = 1):
     #     username = user['ID']
     #     messageCount = f"{user['MessageCount']} messages"
@@ -490,17 +443,16 @@ async def leaderboard(ctx: SlashContext, number: int = 10):
     #     else:
     #         description += "#{} - {} - {}".format(index, username, messageCount)
     
-    # description += "\n\n**Voice**\n\u200b"
+    # description += "\n\n**__Voice:__**\n\u200b"
     # for index, user in enumerate(voice_result, start = 1):
     #     username = user['ID']
-    #     voiceMins = user['VoiceMins']
-    #     voiceHours = voiceMins
+    #     voiceHours = user['VoiceMins']/60.0
     #     if index != len(voice_result):
-    #         description += "#{} - {} - {}\n\u200b".format(index, username, voiceMins)
+    #         description += "#{} - {} - {:.1f} hours\n\u200b".format(index, username, voiceHours)
     #     else:
-    #         description += "#{} - {} - {}".format(index, username, voiceMins)
+    #         description += "#{} - {} - {:.1f} hours".format(index, username, voiceHours)
 
-    description = ""
+    description = "\n\u200b"
     for index, user in enumerate(party_result, start=1):
         username = user['ID']
         if user['partyCount'] == 1:
