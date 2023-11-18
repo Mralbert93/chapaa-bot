@@ -164,6 +164,7 @@ def get_roles_list(party_type):
 def resolve_party_type(user_input):
     for party_type, party_info in PartyTypeInfo.items():
         aliases = party_info.get("Aliases", [])
-        if user_input.lower() in aliases:
-            return party_type
+        for alias in aliases:
+            if alias.lower() in user_input.lower():
+                return party_type
     return None
