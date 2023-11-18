@@ -178,7 +178,6 @@ async def create(ctx: SlashContext, type: str, quantity: str, host: str, time: i
     global party
 
     if ctx.channel.parent_channel.name != "palia-parties":
-        print(ctx.channel.parent_channel.name)
         error_post = await ctx.send(f"<@{ctx.author.id}>, please use #palia-parties channel to post parties.")
         await asyncio.sleep(30)
         await error_post.delete()
