@@ -24,8 +24,9 @@ The bot has the following slash commands:
 
 The currently supported party types are:
 - Cooking
+  - Apple Pie
   - Bouillabaisse
-  - Celebration Cake
+  - Celebration Cake 
   - Chili Oil Dumpling
   - Crab Pot Pie
 - Hunting
