@@ -10,9 +10,6 @@ The bot has the following slash commands:
 - host (Required) - In game name of host
 - multi (Optional) - Whether player can have multiple roles (true/false)
 
-`/party repost` - reposts current Palia party
-- id (Required) - ID of party
-
 `/party notify` - notify users that party is starting
 - id (Required) - ID of party
 
