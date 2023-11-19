@@ -177,6 +177,12 @@ async def edit_message(self, ctx, message_id: int):
 async def create(ctx: SlashContext, type: str, quantity: str, host: str, time: int = None, multi: bool = True):
     global party
 
+    if ctx.channel.type != 11:
+        error_post = await ctx.send(f"<@{ctx.author.id}>, please use #palia-parties channel to post parties.")
+        await asyncio.sleep(30)
+        await error_post.delete()
+        return
+
     if ctx.channel.parent_channel.name != "palia-parties":
         error_post = await ctx.send(f"<@{ctx.author.id}>, please use #palia-parties channel to post parties.")
         await asyncio.sleep(30)
