@@ -183,7 +183,7 @@ async def create(ctx: SlashContext, type: str, quantity: str, host: str, time: i
         await error_post.delete()
         return
 
-    if ctx.channel.parent_channel.name != "palia-parties":
+    if "palia-parties" not in ctx.channel.parent_channel.name.lower():
         error_post = await ctx.send(f"<@{ctx.author.id}>, please use #palia-parties channel to post parties.")
         await asyncio.sleep(30)
         await error_post.delete()
