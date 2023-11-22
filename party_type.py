@@ -150,7 +150,45 @@ PartyTypeInfo = {
         "Ingredients": {
         },
         "Image": "https://palia.wiki.gg/images/thumb/b/b0/Currency_Mining.png/75px-Currency_Mining.png"
-    }
+    },
+    "Muujin Bahari": {
+        "Aliases": ["muujin", "bahari"],
+        "Roles": {
+            "Starter": ["Open"],
+            "Mustard": ["Open"],
+            "Grilled Muujin": ["Open"],
+            "Chopped Garlic": ["Open"],
+            "Chopped Sprouts": ["Open"],
+            "Chopped Onion": ["Open"],
+            "Chopped Pepper": ["Open"],
+            "Chopped Mushroom": ["Open"],
+            "Proschapaa": ["Open"],
+            "Cornmeal": ["Open"] * 2,
+            "Dough": ["Open"] * 2,
+            "Spice & Veggie Mixer": ["Open"],
+            "Rolled Dough": ["Open"],
+            "Duxelles": ["Open"],
+            "Rolled Duxelles": ["Open"],
+            "Unbaked Muujin": ["Open"],
+            "Baker": ["Open"]
+        },
+        "Ingredients": {
+            "Starter": ":butter: Butter",
+            "Mustard": "Spice Sprouts, Vinegar",
+            "Grilled Muujin": ":cut_of_meat: Muujin Meat, Plant Fiber, <:cooking_oil:1172680846856159263> Oil",
+            "Chopped Garlic": ":garlic: Garlic",
+            "Chopped Sprouts": "Spice Sprouts",
+            "Chopped Onion": ":onion: Onion",
+            "Chopped Pepper": ":hot_pepper: Spicy Pepper",
+            "Chopped Mushroom": ":mushroom:  Mushroom",
+            "Proschapaa": ":cut_of_meat: Chapaa Meat, :salt: Salt", 
+            "Cornmeal": ":corn: Corn",
+            "Dough": "<:wheat:1172680400276029541> Wheat",
+            "Rolled Dough": ":butter: Butter, :salt: Salt",
+            "Duxelles": ":salt: Salt",
+            "Unbaked Muujin": ":egg: Egg"
+        },
+        "Image": "https://palia.wiki.gg/images/thumb/c/cb/Currency_Cooking.png"
 }
 
 SUPPORTED_PARTY_TYPES = set(PartyTypeInfo.keys())
