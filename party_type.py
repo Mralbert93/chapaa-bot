@@ -189,6 +189,7 @@ PartyTypeInfo = {
             "Unbaked Muujin": ":egg: Egg"
         },
         "Image": "https://palia.wiki.gg/images/thumb/c/cb/Currency_Cooking.png"
+    }
 }
 
 SUPPORTED_PARTY_TYPES = set(PartyTypeInfo.keys())
