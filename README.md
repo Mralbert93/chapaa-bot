@@ -8,6 +8,7 @@ The bot has the following slash commands:
 - type (Required) - Type of party
 - quantity (Required) - Quantity to be made
 - host (Required) - In game name of host
+- time (Optional) - Start time of party
 - multi (Optional) - Whether player can have multiple roles (true/false)
 
 `/party notify` - notify users that party is starting
