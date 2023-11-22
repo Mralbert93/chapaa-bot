@@ -186,7 +186,7 @@ PartyTypeInfo = {
             "Dough": "<:wheat:1172680400276029541> Wheat",
             "Rolled Dough": ":butter: Butter, :salt: Salt",
             "Duxelles": ":salt: Salt",
-            "Unbaked Muujin": ":egg: Egg:"
+            "Unbaked Muujin": ":egg: Egg"
         },
         "Image": "https://palia.wiki.gg/images/thumb/c/cb/Currency_Cooking.png"
 }
