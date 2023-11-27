@@ -7,7 +7,8 @@ PartyTypeInfo = {
             "Sprouts": ["Open"],
             "Leafer": ["Open"],
             "Dough": ["Open"],
-            "Filler": ["Open"]
+            "Filler": ["Open"],
+            "Overprep": ["Open"] * 4
         },
         "Ingredients": {
             "Starter": ":butter: Butter",
@@ -15,6 +16,7 @@ PartyTypeInfo = {
             "Sprouts": "Spice Sprouts",
             "Leafer": ":leaves: Sweet Leaves",
             "Dough": "<:wheat:1172680400276029541> Wheat",
+            "Overprep": "Any ingredient above"
         },
         "Image": "https://palia.wiki.gg/images/f/fb/Apple_Pie.png",
         "Ping": "<@&1178456973365227610>"
