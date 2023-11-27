@@ -110,7 +110,7 @@ async def edit_message(self, ctx, message_id: int):
     description = self.generate_description()
     now = get_time()
     embed = {
-        "title": f"{{{self.Status}}} {self.Quantity}x {self.Type} Party" if self.Quantity is not None else f"{{{self.Status}}} {self.Type} Party",
+        "title": f"({self.Status}) {self.Quantity}x {self.Type} Party" if self.Quantity is not None else f"({self.Status}) {self.Type} Party",
         "description": description,
         "thumbnail": {
             "url": PartyTypeInfo.get(self.Type, {}).get("Image", ""),
@@ -208,7 +208,7 @@ async def create(ctx: SlashContext, type: str, quantity: str, host: str, time: i
     description = party.generate_description()
     now = get_time()
     embed = {
-        "title": f"{{{party.Status}}} {party.Quantity}x {party.Type} Party" if party.Quantity is not None else f"{{{party.Status}}} {party.Type} Party",
+        "title": f"({party.Status}) {party.Quantity}x {party.Type} Party" if party.Quantity is not None else f"({party.Status}) {party.Type} Party",
         "description": description,
         "thumbnail": {
             "url": PartyTypeInfo.get(party.Type, {}).get("Image", ""),
@@ -236,7 +236,7 @@ async def create(ctx: SlashContext, type: str, quantity: str, host: str, time: i
     ]
 
     posting = await ctx.send(embed=embed,components=components)
-    await ctx.channel.edit(name=f"{{{party.Status}}} {party.Quantity}x {party.Type} Party" if party.Quantity is not None else f"{{{party.Status}}} {party.Type} Party")
+    await ctx.channel.edit(name=f"({party.Status}) {party.Quantity}x {party.Type} Party" if party.Quantity is not None else f"({party.Status}) {party.Type} Party")
     party.MessageID = posting.id
     party.ChannelID = posting.channel.id
 
@@ -370,9 +370,15 @@ async def close(ctx: SlashContext, id: int):
     result = parties_collection.find_one({"ID": id})
     party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Time=result['Time'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
 
+    if ctx.channel_id != result["ChannelID"]:
+        error_post = await ctx.send(f"<@{ctx.author.id}>, parties must be closed from their respective thread.")
+        await asyncio.sleep(15)
+        await error_post.delete()
+        return
+
     if result['Status'] == "Closed":
         error_message = await ctx.send(f"Error: The party has already been closed and participation has already been recorded.")
-        await asyncio.sleep(3)
+        await asyncio.sleep(15)
         await error_message.delete()
         return
     
@@ -389,7 +395,7 @@ async def close(ctx: SlashContext, id: int):
     description = party.generate_description()
     now = get_time()
     embed = {
-        "title": f"{{{party.Status}}} {party.Quantity}x {party.Type} Party" if party.Quantity is not None else f"{{{party.Status}}} {party.Type} Party",
+        "title": f"({party.Status}) {party.Quantity}x {party.Type} Party" if party.Quantity is not None else f"({party.Status}) {party.Type} Party",
         "description": description,
         "thumbnail": {
             "url": PartyTypeInfo.get(party.Type, {}).get("Image", ""),
@@ -404,9 +410,55 @@ async def close(ctx: SlashContext, id: int):
     oldchannel = bot.get_channel(party.ChannelID)
     target_message = await oldchannel.fetch_message(party.MessageID)
     await target_message.edit(embed=embed,components=[])
-    await ctx.channel.edit(name=f"{{{party.Status}}} {party.Quantity}x {party.Type} Party" if party.Quantity is not None else f"{{{party.Status}}} {party.Type} Party")
+    await ctx.channel.edit(name=f"({party.Status}) {party.Quantity}x {party.Type} Party" if party.Quantity is not None else f"({party.Status}) {party.Type} Party")
     confirmation = await ctx.send(f"The party has finished and participation has been recorded :partying_face:")
     await ctx.channel.edit(locked=True)
+
+# Cancel command
+@slash_command(
+        name="party",
+        description="Used to manage Palia parties",
+        sub_cmd_name="cancel",
+        sub_cmd_description="Cancel a party",
+)
+@slash_option(
+    name="id",
+    description="ID of party",
+    required=True,
+    opt_type=OptionType.INTEGER
+)
+async def cancel(ctx: SlashContext, id: int):
+    result = parties_collection.find_one({"ID": id})
+
+    if result == None:
+        error_post = await ctx.send(f"<@{ctx.author.id}>, party not found. Please ensure you are specifying a valid Party ID.")
+        await asyncio.sleep(15)
+        await error_post.delete()
+        return
+
+    if ctx.channel_id != result["ChannelID"]:
+        error_post = await ctx.send(f"<@{ctx.author.id}>, parties must be deleted from their respective thread.")
+        await asyncio.sleep(15)
+        await error_post.delete()
+        return
+    
+    if result["Status"] != "Open":
+        error_post = await ctx.send(f"<@{ctx.author.id}>, only Open parties may be canceled.")
+        await asyncio.sleep(15)
+        await error_post.delete()
+        return
+
+    result = parties_collection.delete_one({"ID": id})
+
+    if result.deleted_count != 1:
+        error_post = await ctx.send(f"<@{ctx.author.id}>, party unable to be canceled for unknown reason.")
+        await asyncio.sleep(15)
+        await error_post.delete()
+        return
+    
+    warning = await ctx.send(f"Party {id} has been canceled. This thread will self destruct in 30 seconds.")
+    await asyncio.sleep(30)
+    await warning.channel.delete()
 
 # Leaderboard command
 @slash_command(
