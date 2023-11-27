@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 from interactions import Client, Intents, listen, slash_command, SlashContext, OptionType, slash_option, ActionRow, Button, ButtonStyle, StringSelectMenu, Guild
 from interactions.api.events import Component
 import os
-from party_type import PartyTypeInfo, get_roles_list, resolve_party_type, get_supported_party_types
+from party_type import PartyTypeInfo, get_roles_list, resolve_party_type, get_supported_party_types, get_mention_role, display_quantity
 import pymongo
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
@@ -24,7 +24,7 @@ except Exception as e:
     print(e)
 
 # Set database and collections
-db = mongo.chapaa
+db = mongo.chapaa2
 parties_collection = db["parties"]
 users_collection = db["users"]
 
@@ -110,7 +110,7 @@ async def edit_message(self, ctx, message_id: int):
     description = self.generate_description()
     now = get_time()
     embed = {
-        "title": f"{{{self.Status}}} {self.Quantity}x {self.Type} Party",
+        "title": f"{{{self.Status}}} {self.Quantity}x {self.Type} Party" if self.Quantity is not None else f"{{{self.Status}}} {self.Type} Party",
         "description": description,
         "thumbnail": {
             "url": PartyTypeInfo.get(self.Type, {}).get("Image", ""),
@@ -199,13 +199,16 @@ async def create(ctx: SlashContext, type: str, quantity: str, host: str, time: i
         await error_post.delete()
         return
     
-    next_id = get_next_sequence_value('item_id')
+    if display_quantity(type) == False:
+        quantity = None
 
+    next_id = get_next_sequence_value('item_id')
+        
     party = Party(ID=next_id, Status="Open", Type=type, Quantity=quantity, Host=host, Time=time, Multi=multi, Roles=None)
     description = party.generate_description()
     now = get_time()
     embed = {
-        "title": f"{{{party.Status}}} {party.Quantity}x {party.Type} Party",
+        "title": f"{{{party.Status}}} {party.Quantity}x {party.Type} Party" if party.Quantity is not None else f"{{{party.Status}}} {party.Type} Party",
         "description": description,
         "thumbnail": {
             "url": PartyTypeInfo.get(party.Type, {}).get("Image", ""),
@@ -233,9 +236,14 @@ async def create(ctx: SlashContext, type: str, quantity: str, host: str, time: i
     ]
 
     posting = await ctx.send(embed=embed,components=components)
-    await ctx.channel.edit(name=f"{{{party.Status}}} {party.Quantity}x {party.Type} Party")
+    await ctx.channel.edit(name=f"{{{party.Status}}} {party.Quantity}x {party.Type} Party" if party.Quantity is not None else f"{{{party.Status}}} {party.Type} Party")
     party.MessageID = posting.id
     party.ChannelID = posting.channel.id
+
+    ping = get_mention_role(type)
+    channel = bot.get_channel(posting.channel.id)
+    await bot.get_channel(posting.channel.id).send(ping)
+
 
     party_data = {
         "ID": party.ID,
@@ -261,18 +269,12 @@ async def on_component(event: Component):
 
     async def retrieve_party(message_id, action):
         nonlocal party
-        if action == "signup":
+        if action == "signup" or action == "unsignup":
             result = parties_collection.find_one({"MessageID": message_id})
-            party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Time=result['Time'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
-            return party
-        if action == "unsignup":
-            result = parties_collection.find_one({"MessageID": message_id})
-            party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Time=result['Time'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
-            return party
         elif action == "role":
             result = parties_collection.find_one({"Responses": {"$elemMatch": {"$eq": message_id}}})
-            party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Time=result['Time'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
-            return party
+        party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Time=result['Time'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
+        return party
         
     async def set_deleted():
         nonlocal signup_message
@@ -387,7 +389,7 @@ async def close(ctx: SlashContext, id: int):
     description = party.generate_description()
     now = get_time()
     embed = {
-        "title": f"{{{party.Status}}} {party.Quantity}x {party.Type} Party",
+        "title": f"{{{party.Status}}} {party.Quantity}x {party.Type} Party" if party.Quantity is not None else f"{{{party.Status}}} {party.Type} Party",
         "description": description,
         "thumbnail": {
             "url": PartyTypeInfo.get(party.Type, {}).get("Image", ""),
@@ -402,7 +404,7 @@ async def close(ctx: SlashContext, id: int):
     oldchannel = bot.get_channel(party.ChannelID)
     target_message = await oldchannel.fetch_message(party.MessageID)
     await target_message.edit(embed=embed,components=[])
-    await ctx.channel.edit(name=f"{{{party.Status}}} {party.Quantity}x {party.Type} Party",)
+    await ctx.channel.edit(name=f"{{{party.Status}}} {party.Quantity}x {party.Type} Party" if party.Quantity is not None else f"{{{party.Status}}} {party.Type} Party")
     confirmation = await ctx.send(f"The party has finished and participation has been recorded :partying_face:")
     await ctx.channel.edit(locked=True)
 
