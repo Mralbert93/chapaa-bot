@@ -16,7 +16,8 @@ PartyTypeInfo = {
             "Leafer": ":leaves: Sweet Leaves",
             "Dough": "<:wheat:1172680400276029541> Wheat",
         },
-        "Image": "https://palia.wiki.gg/images/f/fb/Apple_Pie.png"
+        "Image": "https://palia.wiki.gg/images/f/fb/Apple_Pie.png",
+        "Ping": "<@&1178456973365227610>"
     },
     "Bouillabaisse": {
         "Aliases": ["bouillabaisse", "bouil"],
@@ -36,7 +37,8 @@ PartyTypeInfo = {
             "Sprouts": "Spice Sprouts",
             "Overprep": "Any ingredient above"
         },
-        "Image": "https://palia.wiki.gg/images/9/9d/Bouillabaisse.png"
+        "Image": "https://palia.wiki.gg/images/9/9d/Bouillabaisse.png",
+        "Ping": "<@&1178456973365227610>"
     },
     "Bug Catching": {
         "Aliases": ["bug", "catching"],
@@ -46,7 +48,9 @@ PartyTypeInfo = {
         "Ingredients": {
             "Catcher": "Smoke Bombs, Honey Lure (Optional)"
         },
-        "Image": "https://palia.wiki.gg/images/thumb/4/47/Currency_Bug.png/75px-Currency_Bug.png"
+        "Image": "https://palia.wiki.gg/images/thumb/4/47/Currency_Bug.png/75px-Currency_Bug.png",
+        "Ping": "<@&1178489640244748359>",
+        "DisplayQuantity": False
     },
     "Celebration Cake": {
         "Aliases": ["celebration", "cake", "cakes"],
@@ -67,7 +71,8 @@ PartyTypeInfo = {
             "Fruit Froster": ":apple: Any Fruit, <:sugar:1171830932513234974> Sugar",
             "Flexible": "Ingredients TBD"
         },
-        "Image": "https://palia.wiki.gg/images/8/81/Celebration_Cake.png"
+        "Image": "https://palia.wiki.gg/images/8/81/Celebration_Cake.png",
+        "Ping": "<@&1178456973365227610>"
     },
     "Chili Oil Dumpling": {
         "Aliases": ["chili", "dumpling", "dumplings"],
@@ -91,7 +96,8 @@ PartyTypeInfo = {
             "Oil": "<:cooking_oil:1172680846856159263> Cooking Oil",
             "Overprep": "Any ingredient above"
         },
-        "Image": "https://palia.wiki.gg/images/c/c1/Chili_Oil_Dumplings.png"
+        "Image": "https://palia.wiki.gg/images/c/c1/Chili_Oil_Dumplings.png",
+        "Ping": "<@&1178456973365227610>"
     },
     "Crab Pot Pie": {
         "Aliases": ["crab", "pot"],
@@ -111,7 +117,8 @@ PartyTypeInfo = {
             "Crab": ":crab: Any Crab",
             "Overprep": "Any ingredient above"
         },
-        "Image": "https://palia.wiki.gg/images/c/c3/Crab_Pot_Pie.png"
+        "Image": "https://palia.wiki.gg/images/c/c3/Crab_Pot_Pie.png",
+        "Ping": "<@&1178456973365227610>"
     },
     "Fishing": {
         "Aliases": ["fish", "fishing"],
@@ -121,7 +128,9 @@ PartyTypeInfo = {
         "Ingredients": {
             "Fisher": ":worm: Any Worms (Optional)"
         },
-        "Image": "https://palia.wiki.gg/images/thumb/9/97/Currency_Fishing.png/75px-Currency_Fishing.png"
+        "Image": "https://palia.wiki.gg/images/thumb/9/97/Currency_Fishing.png/75px-Currency_Fishing.png",
+        "Ping": "<@&1178457840441114715>",
+        "DisplayQuantity": False
     },
     "Foraging": {
         "Aliases": ["foraging", "chopping", "chop", "woodcut"],
@@ -130,7 +139,9 @@ PartyTypeInfo = {
         },
         "Ingredients": {
         },
-        "Image": "https://palia.wiki.gg/images/thumb/b/b0/Currency_Foraging.png/75px-Currency_Foraging.png"
+        "Image": "https://palia.wiki.gg/images/thumb/b/b0/Currency_Foraging.png/75px-Currency_Foraging.png",
+        "Ping": "<@&1178457526166114394>",
+        "DisplayQuantity": False
     },
     "Hunting": {
         "Aliases": ["hunt", "hunting"],
@@ -140,7 +151,9 @@ PartyTypeInfo = {
         "Ingredients": {
             "Hunter": ":bow_and_arrow: Arrows"
         },
-        "Image": "https://palia.wiki.gg/images/thumb/8/8b/Currency_Hunting.png/75px-Currency_Hunting.png"
+        "Image": "https://palia.wiki.gg/images/thumb/8/8b/Currency_Hunting.png/75px-Currency_Hunting.png",
+        "Ping": "<@&1178457695876034600>",
+        "DisplayQuantity": False
     },
     "Mining": {
         "Aliases": ["mine", "miner", "mining"],
@@ -149,7 +162,9 @@ PartyTypeInfo = {
         },
         "Ingredients": {
         },
-        "Image": "https://palia.wiki.gg/images/thumb/b/b0/Currency_Mining.png/75px-Currency_Mining.png"
+        "Image": "https://palia.wiki.gg/images/thumb/b/b0/Currency_Mining.png/75px-Currency_Mining.png",
+        "Ping": "<@&1178457975548026932>",
+        "DisplayQuantity": False
     },
     "Muujin Bahari": {
         "Aliases": ["muujin", "bahari"],
@@ -188,7 +203,8 @@ PartyTypeInfo = {
             "Duxelles": ":salt: Salt",
             "Unbaked Muujin": ":egg: Egg"
         },
-        "Image": "https://palia.wiki.gg/images/thumb/c/cb/Currency_Cooking.png"
+        "Image": "https://palia.wiki.gg/images/thumb/c/cb/Currency_Cooking.png",
+        "Ping": "<@&1178456973365227610>"
     }
 }
 
@@ -207,3 +223,12 @@ def resolve_party_type(user_input):
             if alias.lower() in user_input.lower():
                 return party_type
     return None
+
+def get_mention_role(type):
+    return PartyTypeInfo[type]["Ping"]
+
+def display_quantity(type):
+    try:
+        return PartyTypeInfo[type]["DisplayQuantity"]
+    except:
+        return True
