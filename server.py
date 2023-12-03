@@ -516,7 +516,6 @@ async def stats(ctx: SlashContext):
 
 @listen()
 async def on_message_create(event):
-
     if event.message.author.bot:
         return
     users_collection.update_one({"ID": f"<@{event.message.author.id}>"}, {'$inc': {'MessageCount':1}}, upsert=True)
