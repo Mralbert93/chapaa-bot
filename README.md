@@ -19,8 +19,7 @@ The bot has the following slash commands:
 `/party close` - closes a party and records user participation
 - id (Required) - ID of party
 
-`/leaderboard` - displays leaderboard for party participation
-- number (Required) - Number of places to display (Max 20)
+`/stats` - displays personal stats for party participation
 
 Once a party is created, players can do the following by interacting with the party post buttons:
 - Sign up for role(s)
