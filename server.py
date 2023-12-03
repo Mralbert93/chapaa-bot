@@ -456,75 +456,52 @@ async def cancel(ctx: SlashContext, id: int):
     await asyncio.sleep(30)
     await warning_message.channel.delete()
 
-# Leaderboard command
+# Stats command
 @slash_command(
-        name="leaderboard",
-        description="Displays leaderboard for party participation",
-)
-@slash_option(
-    name="number",
-    description="Number of places to display (Max 25)",
-    required=True,
-    opt_type=OptionType.INTEGER
+        name="stats",
+        description="Displays personal stats for party participation",
 )
 
-async def leaderboard(ctx: SlashContext, number: int = 10):
-    if number > 20: number = 20
-    pipeline = [
+async def stats(ctx: SlashContext):
+    user = users_collection.find_one({"ID": f"<@{ctx.author_id}>"})
+    user_parties = user.get("Parties", []) if user else []
+
+    result = users_collection.aggregate([
         {
-            "$project": {
-                "ID": 1,
-                "partyCount": {"$size": {"$ifNull": ["$Parties", []]}}
+            '$project': {
+                'ID': 1,
+                'PartyCount': {'$size': {'$ifNull': ['$Parties', []]}}
             }
         },
         {
-            "$sort": {"partyCount": -1}
-        },
-        {
-            "$limit": number
+            '$sort': {'PartyCount': -1}
         }
-    ]
+    ])
+    rank = next((i + 1 for i, doc in enumerate(result) if doc.get('ID') == f"<@{ctx.author_id}>"), None)
 
-    party_result = list(users_collection.aggregate(pipeline))
-    # text_result = list(users_collection.find({}, {"ID":1, "MessageCount": 1}).sort("MessageCount",pymongo.DESCENDING).limit(number))
-    # voice_result = list(users_collection.find({}, {"ID":1, "VoiceMins": 1}).sort("VoiceMins",pymongo.DESCENDING).limit(number))
+    parties = 0
+    parties_type = {}
+    for party_id in user_parties:
+        party = parties_collection.find_one({"ID": party_id}, {"Type": 1})
+        if party:
+            parties += 1
+            party_type = party.get("Type")
+            if party_type not in ['Bug Catching', 'Fishing', 'Foraging', 'Hunting', 'Mining']:
+                party_type = 'Cooking'
+            parties_type[party_type] = parties_type.get(party_type, 0) + 1
+    sorted_parties_type = dict(sorted(parties_type.items(), key=lambda x: x[1], reverse=True))
+
+    description = f"**Rank**: #{rank} of {ctx.guild.member_count}\n"
+    description += f"**Total Parties**: {parties}\n\n"
+    for party_type, count in sorted_parties_type.items():
+        description += f"**{party_type.ljust(15)}**: {count}\n"
     
-    # description = "\n\u200b"
-    # for index, user in enumerate(text_result, start = 1):
-    #     username = user['ID']
-    #     messageCount = f"{user['MessageCount']} messages"
-    #     if index != len(text_result):
-    #         description += "#{} - {} - {}\n\u200b".format(index, username, messageCount)
-    #     else:
-    #         description += "#{} - {} - {}".format(index, username, messageCount)
-    
-    # description += "\n\n**__Voice:__**\n\u200b"
-    # for index, user in enumerate(voice_result, start = 1):
-    #     username = user['ID']
-    #     voiceHours = user['VoiceMins']/60.0
-    #     if index != len(voice_result):
-    #         description += "#{} - {} - {:.1f} hours\n\u200b".format(index, username, voiceHours)
-    #     else:
-    #         description += "#{} - {} - {:.1f} hours".format(index, username, voiceHours)
-
-    description = "\n\u200b"
-    for index, user in enumerate(party_result, start=1):
-        username = user['ID']
-        if user['partyCount'] == 1:
-            partyCount = f"{user['partyCount']} Party"
-        else:
-            partyCount = f"{user['partyCount']} Parties"
-        if index != len(party_result):
-            description += "#{} - {} - {}\n\u200b".format(index, username, partyCount)
-        else:
-            description += "#{} - {} - {}".format(index, username, partyCount)
-
     now = get_time()
     embed = {
-        "title": f"Party Leaderboard",
+        "title": f"User Statistics",
         "description": description,
         "thumbnail": {
-            "url": "https://pngimg.com/uploads/golden_cup/golden_cup_PNG94626.png",
+            "url": ctx.author.avatar_url,
             "height": 0,
             "width": 0
         },
@@ -532,21 +509,11 @@ async def leaderboard(ctx: SlashContext, number: int = 10):
             "text": f"Last updated at {now} Eastern"
         }
     }
-
-    components: list[ActionRow] = [
-        ActionRow(
-            Button(
-                style=ButtonStyle.GREEN,
-                label="Refresh",
-                custom_id="refresh",
-            )
-        )
-    ]
-
-    posting = await ctx.send(embed=embed,components=components)
+    await ctx.send(embed=embed, ephemeral=True)
 
 @listen()
 async def on_message_create(event):
+
     if event.message.author.bot:
         return
     users_collection.update_one({"ID": f"<@{event.message.author.id}>"}, {'$inc': {'MessageCount':1}}, upsert=True)
