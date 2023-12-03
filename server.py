@@ -24,7 +24,7 @@ except Exception as e:
     print(e)
 
 # Set database and collections
-db = mongo.chapaa2
+db = mongo.chapaa
 parties_collection = db["parties"]
 users_collection = db["users"]
 
