@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 from interactions import Client, Intents, listen, slash_command, SlashContext, OptionType, slash_option, ActionRow, Button, ButtonStyle, StringSelectMenu, Guild
 from interactions.api.events import Component
 import os
-from party_type import PartyTypeInfo, get_roles_list, resolve_party_type, get_supported_party_types, get_mention_role, display_quantity
+from party_type import PartyTypeInfo, get_roles_list, resolve_party_type, get_supported_party_types, get_party_type, display_quantity
 import pymongo
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
@@ -137,6 +137,32 @@ async def edit_message(self, ctx, message_id: int):
     ]
     await message.edit(embed=embed,components=components)
 
+# Command party types
+@slash_command(
+        name="party",
+        description="Used to manage Palia parties",
+        sub_cmd_name="types",
+        sub_cmd_description="Show party types",
+)
+async def types(ctx: SlashContext):
+    description = "The following party types are supported:\n\n* "
+    description += '\n* '.join(sorted(get_supported_party_types()))
+    description += "\n\nPlease reach out to <@838472003031793684> to request a new party type."
+    now = get_time()
+    embed = {
+        "title": "Party Types",
+        "description": description,
+        "thumbnail": {
+            "url": "https://cdn.discordapp.com/avatars/1167995384526807101/7b70962d167b56169e6b46e6d7c2892e.png",
+            "height": 0,
+            "width": 0
+        },
+        "footer": {
+            "text": f"Last updated at {now} Eastern"
+        }
+    }
+    await ctx.send(embed=embed, ephemeral=True, delete_after=60)
+
 # Command create
 @slash_command(
         name="party",
@@ -234,11 +260,6 @@ async def create(ctx: SlashContext, type: str, quantity: str, host: str, time: i
     party.MessageID = posting.id
     party.ChannelID = posting.channel.id
 
-    ping = get_mention_role(type)
-    channel = bot.get_channel(posting.channel.id)
-    await bot.get_channel(posting.channel.id).send(ping)
-
-
     party_data = {
         "ID": party.ID,
         "Status": party.Status,
@@ -253,6 +274,12 @@ async def create(ctx: SlashContext, type: str, quantity: str, host: str, time: i
         "Responses": []
     }
     parties_collection.insert_one(party_data)
+
+    role_name = get_party_type(type)
+    ping = f"<@&{guild_roles_data[ctx.guild_id][role_name]['id']}>"
+    channel = bot.get_channel(posting.channel.id)
+    await bot.get_channel(posting.channel.id).send(ping)
+
     party = None
 
 @listen(Component)
@@ -541,6 +568,22 @@ async def check_channels():
 @listen()
 async def on_startup():
     print("Bot is ready and online!")
+
+    global guild_roles_data
+    guild_roles_data = {}
+
+    for guild in bot.guilds:
+        guild_roles = guild.roles
+
+        roles_info = {
+            role.name: {
+                "id": role.id
+            }
+            for role in guild_roles
+        }
+        
+        guild_roles_data[guild.id] = roles_info
+
     await check_voice_loop()
 
 # Start bot

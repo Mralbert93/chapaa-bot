@@ -19,7 +19,7 @@ PartyTypeInfo = {
             "Overprep": "Any ingredient above"
         },
         "Image": "https://palia.wiki.gg/images/f/fb/Apple_Pie.png",
-        "Ping": "<@&1178456973365227610>"
+        "Type": "Cooking Parties"
     },
     "Bouillabaisse": {
         "Aliases": ["bouillabaisse", "bouil"],
@@ -40,7 +40,7 @@ PartyTypeInfo = {
             "Overprep": "Any ingredient above"
         },
         "Image": "https://palia.wiki.gg/images/9/9d/Bouillabaisse.png",
-        "Ping": "<@&1178456973365227610>"
+        "Type": "Cooking Parties"
     },
     "Bug Catching": {
         "Aliases": ["bug", "catching"],
@@ -51,7 +51,7 @@ PartyTypeInfo = {
             "Catcher": "Smoke Bombs, Honey Lure (Optional)"
         },
         "Image": "https://palia.wiki.gg/images/thumb/4/47/Currency_Bug.png/75px-Currency_Bug.png",
-        "Ping": "<@&1178489640244748359>",
+        "Type": "Bug Catching Parties",
         "DisplayQuantity": False
     },
     "Celebration Cake": {
@@ -74,7 +74,7 @@ PartyTypeInfo = {
             "Flexible": "Ingredients TBD"
         },
         "Image": "https://palia.wiki.gg/images/8/81/Celebration_Cake.png",
-        "Ping": "<@&1178456973365227610>"
+        "Type": "Cooking Parties"
     },
     "Chili Oil Dumpling": {
         "Aliases": ["chili", "dumpling", "dumplings"],
@@ -99,7 +99,7 @@ PartyTypeInfo = {
             "Overprep": "Any ingredient above"
         },
         "Image": "https://palia.wiki.gg/images/c/c1/Chili_Oil_Dumplings.png",
-        "Ping": "<@&1178456973365227610>"
+        "Type": "Cooking Parties"
     },
     "Crab Pot Pie": {
         "Aliases": ["crab", "pot"],
@@ -120,7 +120,7 @@ PartyTypeInfo = {
             "Overprep": "Any ingredient above"
         },
         "Image": "https://palia.wiki.gg/images/c/c3/Crab_Pot_Pie.png",
-        "Ping": "<@&1178456973365227610>"
+        "Type": "Cooking Parties"
     },
     "Fishing": {
         "Aliases": ["fish", "fishing"],
@@ -131,7 +131,7 @@ PartyTypeInfo = {
             "Fisher": ":worm: Any Worms (Optional)"
         },
         "Image": "https://palia.wiki.gg/images/thumb/9/97/Currency_Fishing.png/75px-Currency_Fishing.png",
-        "Ping": "<@&1178457840441114715>",
+        "Type": "Fishing Parties",
         "DisplayQuantity": False
     },
     "Foraging": {
@@ -142,7 +142,7 @@ PartyTypeInfo = {
         "Ingredients": {
         },
         "Image": "https://palia.wiki.gg/images/thumb/b/b0/Currency_Foraging.png/75px-Currency_Foraging.png",
-        "Ping": "<@&1178457526166114394>",
+        "Type": "Foraging Parties",
         "DisplayQuantity": False
     },
     "Hunting": {
@@ -154,7 +154,7 @@ PartyTypeInfo = {
             "Hunter": ":bow_and_arrow: Arrows"
         },
         "Image": "https://palia.wiki.gg/images/thumb/8/8b/Currency_Hunting.png/75px-Currency_Hunting.png",
-        "Ping": "<@&1178457695876034600>",
+        "Type": "Hunting Parties",
         "DisplayQuantity": False
     },
     "Mining": {
@@ -165,7 +165,7 @@ PartyTypeInfo = {
         "Ingredients": {
         },
         "Image": "https://palia.wiki.gg/images/thumb/b/b0/Currency_Mining.png/75px-Currency_Mining.png",
-        "Ping": "<@&1178457975548026932>",
+        "Type": "Mining Parties",
         "DisplayQuantity": False
     },
     "Muujin Bahari": {
@@ -206,7 +206,7 @@ PartyTypeInfo = {
             "Unbaked Muujin": ":egg: Egg"
         },
         "Image": "https://palia.wiki.gg/images/thumb/c/cb/Currency_Cooking.png",
-        "Ping": "<@&1178456973365227610>"
+        "Type": "Cooking Parties"
     }
 }
 
@@ -226,8 +226,8 @@ def resolve_party_type(user_input):
                 return party_type
     return None
 
-def get_mention_role(type):
-    return PartyTypeInfo[type]["Ping"]
+def get_party_type(type):
+    return PartyTypeInfo[type]["Type"]
 
 def display_quantity(type):
     try:
