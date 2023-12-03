@@ -4,6 +4,8 @@ This repository holds to source code for Chapaa Bot.
 
 The bot has the following slash commands:
 
+`/party types` - show party types
+
 `/party create` - creates a Palia party
 - type (Required) - Type of party
 - quantity (Required) - Quantity to be made
@@ -19,19 +21,6 @@ The bot has the following slash commands:
 
 `/leaderboard` - displays leaderboard for party participation
 - number (Required) - Number of places to display (Max 20)
-
-The currently supported party types are:
-- Cooking
-  - Apple Pie
-  - Bouillabaisse
-  - Celebration Cake 
-  - Chili Oil Dumpling
-  - Crab Pot Pie
-- Hunting
-- Bug Catching
-- Foraging
-- Fishing
-- Mining
 
 Once a party is created, players can do the following by interacting with the party post buttons:
 - Sign up for role(s)
