@@ -491,10 +491,13 @@ async def stats(ctx: SlashContext):
             parties_type[party_type] = parties_type.get(party_type, 0) + 1
     sorted_parties_type = dict(sorted(parties_type.items(), key=lambda x: x[1], reverse=True))
 
-    description = f"**Rank**: #{rank} of {ctx.guild.member_count}\n"
-    description += f"**Total Parties**: {parties}\n\n"
+    description = f"**Rank**: #{rank} of {ctx.guild.member_count}\n\n"
+
     for party_type, count in sorted_parties_type.items():
         description += f"**{party_type.ljust(15)}**: {count}\n"
+    
+    description += "-----------------\n"
+    description += f"**Total Parties**: {parties}"
     
     now = get_time()
     embed = {
