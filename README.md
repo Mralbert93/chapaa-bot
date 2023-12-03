@@ -19,6 +19,9 @@ The bot has the following slash commands:
 `/party close` - closes a party and records user participation
 - id (Required) - ID of party
 
+`party cancel` - cancels a party and deletes its thread
+- id (Required) - ID of party
+
 `/stats` - displays personal stats for party participation
 
 Once a party is created, players can do the following by interacting with the party post buttons:
