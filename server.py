@@ -178,15 +178,11 @@ async def create(ctx: SlashContext, type: str, quantity: str, host: str, time: i
     global party
 
     if ctx.channel.type != 11:
-        error_post = await ctx.send(f"<@{ctx.author.id}>, please use #palia-parties channel to post parties.")
-        await asyncio.sleep(30)
-        await error_post.delete()
+        error_message = await ctx.send(f"<@{ctx.author.id}>, please use #palia-parties channel to post parties.", ephemeral=True, delete_after=15)
         return
 
     if "palia-parties" not in ctx.channel.parent_channel.name.lower():
-        error_post = await ctx.send(f"<@{ctx.author.id}>, please use #palia-parties channel to post parties.")
-        await asyncio.sleep(30)
-        await error_post.delete()
+        error_message = await ctx.send(f"<@{ctx.author.id}>, please use #palia-parties channel to post parties.", ephemeral=True, delete_after=15)
         return
 
     resolved_party_type = resolve_party_type(type)
@@ -194,9 +190,7 @@ async def create(ctx: SlashContext, type: str, quantity: str, host: str, time: i
         type = resolved_party_type
     else:
         supported_types_str = ', '.join(get_supported_party_types())
-        error_post = await ctx.send(f"<@{ctx.author.id}>, sorry {type} party type is not supported.\nThe following party types are currently supported: {supported_types_str}")
-        await asyncio.sleep(30)
-        await error_post.delete()
+        error_message = await ctx.send(f"<@{ctx.author.id}>, sorry {type} party type is not supported.\nThe following party types are currently supported: {supported_types_str}", ephemeral=True, delete_after=15)
         return
     
     if display_quantity(type) == False:
@@ -275,18 +269,12 @@ async def on_component(event: Component):
             result = parties_collection.find_one({"Responses": {"$elemMatch": {"$eq": message_id}}})
         party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Time=result['Time'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
         return party
-        
-    async def set_deleted():
-        nonlocal signup_message
-        if signup_message:
-            await signup_message.delete()
-        signup_message = None
 
     match ctx.custom_id:
         case "signup":
             await retrieve_party(ctx.message.id, "signup")
             if party.has_user_signed_up(f"<@{ctx.author.id}>") and party.Multi == False:
-                await ctx.author.send("You have already signed up for a role. Please remove your current role to switch roles.")
+                await ctx.send(f"<@{ctx.author.id}>, you have already signed up for a role. The party host is limiting users to one role. Please remove your current role to switch roles.", ephemeral=True, delete_after=15)
             else:
                 roles_list = get_roles_list(party.Type)
                 components = StringSelectMenu(
@@ -294,10 +282,8 @@ async def on_component(event: Component):
                     placeholder="Choose your role",
                     custom_id="role"
                     )
-                signup_message = await ctx.send(f"<@{ctx.author.id}>",components=components)
+                signup_message = await ctx.send(f"<@{ctx.author.id}>",components=components, ephemeral=True, delete_after=15)
                 parties_collection.update_one({"MessageID": party.MessageID}, {"$push":{"Responses": signup_message.id}})
-                await asyncio.sleep(15)
-                await set_deleted()
 
         case "unsignup":
             await retrieve_party(ctx.message.id, "unsignup")
@@ -305,9 +291,7 @@ async def on_component(event: Component):
                 party.remove_user_from_role(f"<@{ctx.author.id}>")
             await edit_message(party, ctx, party.MessageID)
             parties_collection.update_one({"MessageID": party.MessageID}, {"$set":{"Roles": party.Roles}})
-            confirmation = await ctx.send(f"<@{ctx.author.id}>, you have been removed from the party.")
-            await asyncio.sleep(3)
-            await confirmation.delete()
+            confirmation = await ctx.send(f"<@{ctx.author.id}>, you have been removed from the party.", ephemeral=True, delete_after=3)
 
         case "role":
             await retrieve_party(ctx.message.id, "role")
@@ -315,11 +299,8 @@ async def on_component(event: Component):
             party.set_user_id_for_role(selected_role, f"<@{ctx.author.id}>")
             await edit_message(party, ctx, party.MessageID)
             parties_collection.update_one({"MessageID": party.MessageID}, {"$set":{"Roles": party.Roles}})
-            await set_deleted()
-            confirmation = await ctx.send(f"<@{ctx.author.id}>, you have been added to {selected_role}")
-            await asyncio.sleep(1)
-            await confirmation.delete()
-
+            await ctx.edit_origin(content=f"<@{ctx.author.id}>, you have been added to {selected_role}", components=[])
+            
         case "refresh":
             await leaderboard(ctx)
             await ctx.message.delete()
@@ -371,15 +352,11 @@ async def close(ctx: SlashContext, id: int):
     party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Time=result['Time'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
 
     if ctx.channel_id != result["ChannelID"]:
-        error_post = await ctx.send(f"<@{ctx.author.id}>, parties must be closed from their respective thread.")
-        await asyncio.sleep(15)
-        await error_post.delete()
+        error_message = await ctx.send(f"<@{ctx.author.id}>, parties must be closed from their respective thread.", ephemeral=True, delete_after=15)
         return
 
     if result['Status'] == "Closed":
-        error_message = await ctx.send(f"Error: The party has already been closed and participation has already been recorded.")
-        await asyncio.sleep(15)
-        await error_message.delete()
+        error_message = await ctx.send(f"Error: The party has already been closed and participation has already been recorded.", ephemeral=True, delete_after=15)
         return
     
     user_list = []
@@ -431,34 +408,26 @@ async def cancel(ctx: SlashContext, id: int):
     result = parties_collection.find_one({"ID": id})
 
     if result == None:
-        error_post = await ctx.send(f"<@{ctx.author.id}>, party not found. Please ensure you are specifying a valid Party ID.")
-        await asyncio.sleep(15)
-        await error_post.delete()
+        error_message = await ctx.send(f"<@{ctx.author.id}>, party not found. Please ensure you are specifying a valid Party ID.", ephemeral=True, delete_after=15)
         return
 
     if ctx.channel_id != result["ChannelID"]:
-        error_post = await ctx.send(f"<@{ctx.author.id}>, parties must be deleted from their respective thread.")
-        await asyncio.sleep(15)
-        await error_post.delete()
+        error_message = await ctx.send(f"<@{ctx.author.id}>, parties must be deleted from their respective thread.", ephemeral=True, delete_after=15)
         return
     
     if result["Status"] != "Open":
-        error_post = await ctx.send(f"<@{ctx.author.id}>, only Open parties may be canceled.")
-        await asyncio.sleep(15)
-        await error_post.delete()
+        error_message = await ctx.send(f"<@{ctx.author.id}>, only Open parties may be canceled.", ephemeral=True, delete_after=15)
         return
 
     result = parties_collection.delete_one({"ID": id})
 
     if result.deleted_count != 1:
-        error_post = await ctx.send(f"<@{ctx.author.id}>, party unable to be canceled for unknown reason.")
-        await asyncio.sleep(15)
-        await error_post.delete()
+        error_message = await ctx.send(f"<@{ctx.author.id}>, party unable to be canceled for unknown reason.", ephemeral=True, delete_after=15)
         return
     
-    warning = await ctx.send(f"Party {id} has been canceled. This thread will self destruct in 30 seconds.")
+    warning_message = await ctx.send(f"Party {id} has been canceled. This thread will self destruct in 30 seconds.")
     await asyncio.sleep(30)
-    await warning.channel.delete()
+    await warning_message.channel.delete()
 
 # Leaderboard command
 @slash_command(
