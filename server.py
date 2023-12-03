@@ -257,7 +257,6 @@ async def create(ctx: SlashContext, type: str, quantity: str, host: str, time: i
 
 @listen(Component)
 async def on_component(event: Component):
-    #print(vars(event.ctx))
     ctx = event.ctx
     signup_message = None
     party = None
