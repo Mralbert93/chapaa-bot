@@ -418,6 +418,69 @@ async def close(ctx: SlashContext, id: int):
     confirmation = await ctx.send(f"The party has finished and participation has been recorded :partying_face:")
     await ctx.channel.edit(locked=True)
 
+# Update command
+@slash_command(
+        name="party",
+        description="Used to manage Palia parties",
+        sub_cmd_name="update",
+        sub_cmd_description="Update a party",
+)
+@slash_option(
+    name="id",
+    description="ID of party",
+    required=True,
+    opt_type=OptionType.INTEGER
+)
+@slash_option(
+    name="host",
+    description="In game name of host",
+    required=False,
+    opt_type=OptionType.STRING
+)
+@slash_option(
+    name="quantity",
+    description="Quantity to be made",
+    required=False,
+    opt_type=OptionType.STRING
+)
+@slash_option(
+    name="time",
+    description="Party's planned start time (use https://www.unixtimestamp.com)",
+    required=False,
+    opt_type=OptionType.INTEGER
+)
+async def update(ctx: SlashContext, id: int, host: str = None, quantity: str = None, time: int = None):
+    result = parties_collection.find_one({"ID": id})
+
+    if result == None:   
+        error_message = await ctx.send(f"<@{ctx.author.id}>, party not found. Please ensure you are specifying a valid Party ID.", ephemeral=True, delete_after=15)
+        return
+
+    if ctx.channel_id != result["ChannelID"]:
+        error_message = await ctx.send(f"<@{ctx.author.id}>, parties must be deleted from their respective thread.", ephemeral=True, delete_after=15)
+        return
+    
+    if result["Status"] != "Open":
+        error_message = await ctx.send(f"<@{ctx.author.id}>, only Open parties may be updated.", ephemeral=True, delete_after=15)
+        return
+    
+    update_data = {}
+
+    if host is not None and result ["Host"] != host:
+        update_data["Host"] = host
+
+    if quantity is not None and result ["Quantity"] != quantity:
+        update_data["Quantity"] = quantity
+    
+    if time is not None and result ["Time"] != time:
+        update_data["Time"] = time
+
+    if update_data:
+        parties_collection.update_one({"ID": id}, {"$set": update_data})
+        await ctx.send(f"<@{ctx.author_id}>, Party {id} has been updated. Changes will reflect on next signup/unsignup.", ephemeral=True, delete_after=15)
+    else:
+        await ctx.send(f"<@{ctx.author_id}>, no updates to Party {id} are needed based on input.", ephemeral=True, delete_after=15)
+
 # Cancel command
 @slash_command(
         name="party",
