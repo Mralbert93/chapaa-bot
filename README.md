@@ -19,6 +19,12 @@ The bot has the following slash commands:
 `/party close` - closes a party and records user participation
 - id (Required) - ID of party
 
+`/party update` - updates a party 
+- id (Required) - ID of party
+- host (Optional) - In game name of host
+- quantity (Required) - Quantity to be made
+- time (Optional) - Start time of party
+
 `party cancel` - cancels a party and deletes its thread
 - id (Required) - ID of party
 
