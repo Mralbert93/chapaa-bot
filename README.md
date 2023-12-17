@@ -9,6 +9,7 @@ The bot has the following slash commands:
 `/party create` - creates a Palia party
 - type (Required) - Type of party
 - quantity (Required) - Quantity to be made
+- server (Required) - Palia server (NA, EU, or PA)
 - host (Required) - In game name of host
 - time (Optional) - Start time of party
 - multi (Optional) - Whether player can have multiple roles (true/false)
