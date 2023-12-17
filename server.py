@@ -46,9 +46,10 @@ def get_time():
 
 # Party class
 class Party:
-    def __init__(self, ID, Status, Type, Quantity, Host, Time=None, Multi=None,Roles=None, MessageID=None, ChannelID=None, Responses=None, **kwargs):
+    def __init__(self, ID, Status, Server, Type, Quantity, Host, Time=None, Multi=None,Roles=None, MessageID=None, ChannelID=None, Responses=None, **kwargs):
         self.ID = ID
         self.Status = Status if Status is not None else "Open"
+        self.Server = Server
         self.Type = Type
         self.Quantity = Quantity
         self.Host = Host
@@ -61,7 +62,7 @@ class Party:
         self.Responses = Responses if Responses is not None else []
 
     def __str__(self):
-        return f"Party(ID={self.ID}, Status={self.Status}, Type={self.Type}, Quantity={self.Quantity}, Host={self.Host}, Time={self.Time}, Multi={self.Multi}, Roles={self.Roles}, MessageID={self.MessageID}, ChannelID={self.ChannelID}, Responses={self.Responses})"
+        return f"Party(ID={self.ID}, Server={self.Status}, Status={self.Server}, Type={self.Type}, Quantity={self.Quantity}, Host={self.Host}, Time={self.Time}, Multi={self.Multi}, Roles={self.Roles}, MessageID={self.MessageID}, ChannelID={self.ChannelID}, Responses={self.Responses})"
     
     def get_party_type(Type):
         return PartyTypeInfo.get(Type, {})
@@ -110,7 +111,7 @@ async def edit_message(self, ctx, message_id: int):
     description = self.generate_description()
     now = get_time()
     embed = {
-        "title": f"({self.Status}) {self.Quantity}x {self.Type} Party" if self.Quantity is not None else f"({self.Status}) {self.Type} Party",
+        "title": f"({self.Status}) {self.Server} {self.Quantity}x {self.Type} Party" if self.Quantity is not None else f"({self.Status}) {self.Type} Party",
         "description": description,
         "thumbnail": {
             "url": PartyTypeInfo.get(self.Type, {}).get("Image", ""),
@@ -183,6 +184,12 @@ async def types(ctx: SlashContext):
     opt_type=OptionType.STRING
 )
 @slash_option(
+    name="server",
+    description="Palia server (NA, EU, or PA)",
+    required=True,
+    opt_type=OptionType.STRING
+)
+@slash_option(
     name="host",
     description="In game name of host",
     required=True,
@@ -200,7 +207,7 @@ async def types(ctx: SlashContext):
     required=False,
     opt_type=OptionType.BOOLEAN
 )
-async def create(ctx: SlashContext, type: str, quantity: str, host: str, time: int = None, multi: bool = True):
+async def create(ctx: SlashContext, type: str, quantity: str, server: str, host: str, time: int = None, multi: bool = True):
     global party
 
     if ctx.channel.type != 11:
@@ -224,11 +231,11 @@ async def create(ctx: SlashContext, type: str, quantity: str, host: str, time: i
 
     next_id = get_next_sequence_value('item_id')
         
-    party = Party(ID=next_id, Status="Open", Type=type, Quantity=quantity, Host=host, Time=time, Multi=multi, Roles=None)
+    party = Party(ID=next_id, Status="Open", Server=server, Type=type, Quantity=quantity, Host=host, Time=time, Multi=multi, Roles=None)
     description = party.generate_description()
     now = get_time()
     embed = {
-        "title": f"({party.Status}) {party.Quantity}x {party.Type} Party" if party.Quantity is not None else f"({party.Status}) {party.Type} Party",
+        "title": f"({party.Status}) {party.Server} {party.Quantity}x {party.Type} Party" if party.Quantity is not None else f"({party.Status}) {party.Server} {party.Type} Party",
         "description": description,
         "thumbnail": {
             "url": PartyTypeInfo.get(party.Type, {}).get("Image", ""),
@@ -256,7 +263,7 @@ async def create(ctx: SlashContext, type: str, quantity: str, host: str, time: i
     ]
 
     posting = await ctx.send(embed=embed,components=components)
-    await ctx.channel.edit(name=f"({party.Status}) {party.Quantity}x {party.Type} Party" if party.Quantity is not None else f"({party.Status}) {party.Type} Party")
+    await ctx.channel.edit(name=f"({party.Status}) {party.Server} {party.Quantity}x {party.Type} Party" if party.Quantity is not None else f"({party.Status}) {party.Type} Party")
     party.MessageID = posting.id
     party.ChannelID = posting.channel.id
 
@@ -265,6 +272,7 @@ async def create(ctx: SlashContext, type: str, quantity: str, host: str, time: i
         "Status": party.Status,
         "Type": party.Type,
         "Quantity": party.Quantity,
+        "Server": party.Server,
         "Host": party.Host,
         "Time": party.Time,
         "Multi": party.Multi,
@@ -294,7 +302,7 @@ async def on_component(event: Component):
             result = parties_collection.find_one({"MessageID": message_id})
         elif action == "role":
             result = parties_collection.find_one({"Responses": {"$elemMatch": {"$eq": message_id}}})
-        party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Time=result['Time'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
+        party = Party(ID=result['ID'], Status=result['Status'], Server=result['Server'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Time=result['Time'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
         return party
 
     match ctx.custom_id:
@@ -349,7 +357,7 @@ async def notify(ctx: SlashContext, id: int):
     user_list = []
 
     result = parties_collection.find_one({"ID": id})
-    party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Time=result['Time'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
+    party = Party(ID=result['ID'], Status=result['Status'], Server=result['Server'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Time=result['Time'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
 
 
     for role_list in party.Roles.values():
@@ -376,7 +384,7 @@ async def notify(ctx: SlashContext, id: int):
 )
 async def close(ctx: SlashContext, id: int):
     result = parties_collection.find_one({"ID": id})
-    party = Party(ID=result['ID'], Status=result['Status'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Time=result['Time'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
+    party = Party(ID=result['ID'], Status=result['Status'], Server=result['Server'], Type=result['Type'], Quantity=result['Quantity'], Host=result['Host'], Time=result['Time'], Multi=result['Multi'], Roles=result['Roles'], MessageID=result['MessageID'], ChannelID=result['ChannelID'], Responses=result['Responses'])
 
     if ctx.channel_id != result["ChannelID"]:
         error_message = await ctx.send(f"<@{ctx.author.id}>, parties must be closed from their respective thread.", ephemeral=True, delete_after=15)
@@ -399,7 +407,7 @@ async def close(ctx: SlashContext, id: int):
     description = party.generate_description()
     now = get_time()
     embed = {
-        "title": f"({party.Status}) {party.Quantity}x {party.Type} Party" if party.Quantity is not None else f"({party.Status}) {party.Type} Party",
+        "title": f"({party.Status}) {party.Server} {party.Quantity}x {party.Type} Party" if party.Quantity is not None else f"({party.Status}) {party.Server} {party.Type} Party",
         "description": description,
         "thumbnail": {
             "url": PartyTypeInfo.get(party.Type, {}).get("Image", ""),
@@ -414,7 +422,7 @@ async def close(ctx: SlashContext, id: int):
     oldchannel = bot.get_channel(party.ChannelID)
     target_message = await oldchannel.fetch_message(party.MessageID)
     await target_message.edit(embed=embed,components=[])
-    await ctx.channel.edit(name=f"({party.Status}) {party.Quantity}x {party.Type} Party" if party.Quantity is not None else f"({party.Status}) {party.Type} Party")
+    await ctx.channel.edit(name=f"({party.Status}) {party.Server} {party.Quantity}x {party.Type} Party" if party.Quantity is not None else f"({party.Status}) {party.Type} Party")
     confirmation = await ctx.send(f"The party has finished and participation has been recorded :partying_face:")
     await ctx.channel.edit(locked=True)
 
