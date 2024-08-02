@@ -103,7 +103,7 @@ PartyTypeInfo = {
         "Type": "Cooking Parties"
     },
     "Crab Pot Pie": {
-        "Aliases": ["crab", "pot"],
+        "Aliases": ["crab"],
         "Roles": {
             "Starter": ["Open"],
             "Dough": ["Open"],
