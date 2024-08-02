@@ -13,7 +13,7 @@ PartyTypeInfo = {
         "Ingredients": {
             "Starter": ":butter: Butter",
             "Apple": ":apple: 3x Apple",
-            "Sprouts": "Spice Sprouts",
+            "Sprouts": "<:spice_sprouts:1269044707074506883> Spice Sprouts",
             "Leafer": ":leaves: Sweet Leaves",
             "Dough": "<:wheat:1172680400276029541> Wheat",
             "Overprep": "Any ingredient above"
@@ -33,10 +33,10 @@ PartyTypeInfo = {
         },
         "Ingredients": {
             "Starter": ":fish: Any Bass, :oyster: Oyster Meat",
-            "Dough": "<:wheat:1172680400276029541> Wheat",
+            "Dough": "<:wheat:1269044256635355182> Wheat",
             "Potato": ":potato: Potato",
             "Onion": ":onion: Onion",
-            "Sprouts": "Spice Sprouts",
+            "Sprouts": "<:spice_sprouts:1269044707074506883> Spice Sprouts",
             "Overprep": "Any ingredient above"
         },
         "Image": "https://palia.wiki.gg/images/9/9d/Bouillabaisse.png",
@@ -90,13 +90,13 @@ PartyTypeInfo = {
             "Overprep": ["Open"] * 4
         },
         "Ingredients": {
-            "Starter": "Spice Sprouts",
+            "Starter": "<:spice_sprouts:1269044707074506883> Spice Sprouts",
             "Meat": ":cut_of_meat: Any Red Meat",
             "Vegetable": ":potato: Any Vegetable",
-            "Wheat": "<:wheat:1172680400276029541> Wheat",
+            "Wheat": "<:wheat:1269044256635355182> Wheat",
             "Rice": ":rice: Rice",
             "Pepper": ":hot_pepper: Spicy Pepper",
-            "Oil": "<:cooking_oil:1172680846856159263> Cooking Oil",
+            "Oil": "<:cooking_oil:1269043470874447923> Cooking Oil",
             "Overprep": "Any ingredient above"
         },
         "Image": "https://palia.wiki.gg/images/c/c1/Chili_Oil_Dumplings.png",
@@ -114,7 +114,7 @@ PartyTypeInfo = {
         },
         "Ingredients": {
             "Starter": ":butter: Butter, :corn: Corn",
-            "Dough": "<:wheat:1172680400276029541> Wheat",
+            "Dough": "<:wheat:1269044256635355182> Wheat",
             "Onion": ":onion: Onion",
             "Vegetable": ":potato: Any Vegetable",
             "Crab": ":crab: Any Crab",
@@ -205,16 +205,16 @@ PartyTypeInfo = {
         },
         "Ingredients": {
             "Starter": ":butter: Butter",
-            "Mustard": "Spice Sprouts, Vinegar",
-            "Grilled Muujin": ":cut_of_meat: Muujin Meat, Plant Fiber, <:cooking_oil:1172680846856159263> Oil",
+            "Mustard": "<:spice_sprouts:1269044707074506883> Spice Sprouts, Vinegar",
+            "Grilled Muujin": ":cut_of_meat: Muujin Meat, Plant Fiber, <:cooking_oil:1269043470874447923> Oil",
             "Chopped Garlic": ":garlic: Garlic",
-            "Chopped Sprouts": "Spice Sprouts",
+            "Chopped Sprouts": "<:spice_sprouts:1269044707074506883> Spice Sprouts",
             "Chopped Onion": ":onion: Onion",
             "Chopped Pepper": ":hot_pepper: Spicy Pepper",
             "Chopped Mushroom": ":mushroom:  Mushroom",
             "Proschapaa": ":cut_of_meat: Chapaa Meat, :salt: Salt", 
             "Cornmeal": ":corn: Corn",
-            "Dough": "<:wheat:1172680400276029541> Wheat",
+            "Dough": "<:wheat:1269044256635355182> Wheat",
             "Rolled Dough": ":butter: Butter, :salt: Salt",
             "Duxelles": ":salt: Salt",
             "Unbaked Muujin": ":egg: Egg"
