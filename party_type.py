@@ -11,10 +11,10 @@ PartyTypeInfo = {
             "Overprep": ["Open"] * 4
         },
         "Ingredients": {
-            "Starter": ":butter: Butter",
-            "Apple": ":apple: 3x Apple",
+            "Starter": "<:butter:1269046608465760257> Butter",
+            "Apple": "<:apple:1269047161472155798> 3x Apple",
             "Sprouts": "<:spice_sprouts:1269044707074506883> Spice Sprouts",
-            "Leafer": ":leaves: Sweet Leaves",
+            "Leafer": "<:sweet_leaf:1269047572098711582> Sweet Leaves",
             "Dough": "<:wheat:1172680400276029541> Wheat",
             "Overprep": "Any ingredient above"
         },
@@ -32,10 +32,10 @@ PartyTypeInfo = {
             "Overprep": ["Open"] * 4
         },
         "Ingredients": {
-            "Starter": ":fish: Any Bass, :oyster: Oyster Meat",
+            "Starter": "<:fish:1269048522057977929> Any Bass, <:oyster_meat:1269049030294376479> Oyster Meat",
             "Dough": "<:wheat:1269044256635355182> Wheat",
-            "Potato": ":potato: Potato",
-            "Onion": ":onion: Onion",
+            "Potato": "<:potato:1269049307584008202> Potato",
+            "Onion": "<:onion:1269049565542355075> Onion",
             "Sprouts": "<:spice_sprouts:1269044707074506883> Spice Sprouts",
             "Overprep": "Any ingredient above"
         },
@@ -48,7 +48,7 @@ PartyTypeInfo = {
             "Catcher": ["Open"]*10,
         },
         "Ingredients": {
-            "Catcher": "Smoke Bombs, Honey Lure (Optional)"
+            "Catcher": "<:smoke_bomb:1269054305042956360> Smoke Bombs, <:honey_lure:1269054444595712072> Honey Lure (Optional)"
         },
         "Image": "https://palia.wiki.gg/images/thumb/4/47/Currency_Bug.png/75px-Currency_Bug.png",
         "Type": "Bug Catching Parties",
@@ -67,11 +67,11 @@ PartyTypeInfo = {
             "Flexible": ["Open"] * 4
         },
         "Ingredients": {
-            "Starter": ":blueberries: Blueberries",
-            "Batter": ":butter: Butter, :egg: Eggs, <:flour:1168232067197317130> Flour",
-            "Froster": ":milk: Milk, :butter: Butter",
-            "Leafer": ":leaves: Sweet Leaves",
-            "Fruit Froster": ":apple: Any Fruit, <:sugar:1171830932513234974> Sugar",
+            "Starter": "<:blueberries:1269049812221820968> Blueberries",
+            "Batter": "<:butter:1269046608465760257> Butter, <:egg:1269050060684136478> Eggs, <:flour:1168232067197317130> Flour",
+            "Froster": "<:milk:1269050758666522767> Milk, <:butter:1269046608465760257> Butter",
+            "Leafer": "<:sweet_leaf:1269047572098711582> Sweet Leaves",
+            "Fruit Froster": "<:apple:1269047161472155798> Any Fruit, <:sugar:1171830932513234974> Sugar",
             "Flexible": "Ingredients TBD"
         },
         "Image": "https://palia.wiki.gg/images/8/81/Celebration_Cake.png",
@@ -91,11 +91,11 @@ PartyTypeInfo = {
         },
         "Ingredients": {
             "Starter": "<:spice_sprouts:1269044707074506883> Spice Sprouts",
-            "Meat": ":cut_of_meat: Any Red Meat",
-            "Vegetable": ":potato: Any Vegetable",
+            "Meat": "<:meat:1269050404373790730> Any Red Meat",
+            "Vegetable": "<:potato:1269049307584008202> Any Vegetable",
             "Wheat": "<:wheat:1269044256635355182> Wheat",
-            "Rice": ":rice: Rice",
-            "Pepper": ":hot_pepper: Spicy Pepper",
+            "Rice": "<:rice:1269050943090200637> Rice",
+            "Pepper": "<:spicy_pepper:1269051172245999616> Spicy Pepper",
             "Oil": "<:cooking_oil:1269043470874447923> Cooking Oil",
             "Overprep": "Any ingredient above"
         },
@@ -113,11 +113,11 @@ PartyTypeInfo = {
             "Overprep": ["Open"] * 4
         },
         "Ingredients": {
-            "Starter": ":butter: Butter, :corn: Corn",
+            "Starter": "<:butter:1269046608465760257> Butter, <:corn:1269051443239714877> Corn",
             "Dough": "<:wheat:1269044256635355182> Wheat",
-            "Onion": ":onion: Onion",
-            "Vegetable": ":potato: Any Vegetable",
-            "Crab": ":crab: Any Crab",
+            "Onion": "<:onion:1269049565542355075> Onion",
+            "Vegetable": "<:potato:1269049307584008202> Any Vegetable",
+            "Crab": "<:crab:1269051710303899678> Any Crab",
             "Overprep": "Any ingredient above"
         },
         "Image": "https://palia.wiki.gg/images/c/c3/Crab_Pot_Pie.png",
@@ -129,7 +129,7 @@ PartyTypeInfo = {
             "Fisher": ["Open"]*10,
         },
         "Ingredients": {
-            "Fisher": ":worm: Any Worms (Optional)"
+            "Fisher": "<:worm:1269052110302085202><:glow_worm:1269052232939339776> Any Worms (Optional)"
         },
         "Image": "https://palia.wiki.gg/images/thumb/9/97/Currency_Fishing.png/75px-Currency_Fishing.png",
         "Type": "Fishing Parties",
@@ -165,7 +165,7 @@ PartyTypeInfo = {
             "Hunter": ["Open"]*10,
         },
         "Ingredients": {
-            "Hunter": ":bow_and_arrow: Arrows"
+            "Hunter": "<:fine_arrow:1269052557909692608><:slowdown_arrow:1269052685173133453><:dispel_arrow:1269052817373528247> Arrows"
         },
         "Image": "https://palia.wiki.gg/images/thumb/8/8b/Currency_Hunting.png/75px-Currency_Hunting.png",
         "Type": "Hunting Parties",
@@ -204,20 +204,20 @@ PartyTypeInfo = {
             "Baker": ["Open"]
         },
         "Ingredients": {
-            "Starter": ":butter: Butter",
-            "Mustard": "<:spice_sprouts:1269044707074506883> Spice Sprouts, Vinegar",
-            "Grilled Muujin": ":cut_of_meat: Muujin Meat, Plant Fiber, <:cooking_oil:1269043470874447923> Oil",
-            "Chopped Garlic": ":garlic: Garlic",
+            "Starter": "<:butter:1269046608465760257> Butter",
+            "Mustard": "<:spice_sprouts:1269044707074506883> Spice Sprouts, <:vinegar:1269052977994403910> Vinegar",
+            "Grilled Muujin": "<:muujin_meat:1269053150321578015> Muujin Meat, <:plant_fiber:1269053285877157980> Plant Fiber, <:cooking_oil:1269043470874447923> Oil",
+            "Chopped Garlic": "<:garlic:1269053413115826322> Garlic",
             "Chopped Sprouts": "<:spice_sprouts:1269044707074506883> Spice Sprouts",
-            "Chopped Onion": ":onion: Onion",
-            "Chopped Pepper": ":hot_pepper: Spicy Pepper",
-            "Chopped Mushroom": ":mushroom:  Mushroom",
-            "Proschapaa": ":cut_of_meat: Chapaa Meat, :salt: Salt", 
-            "Cornmeal": ":corn: Corn",
+            "Chopped Onion": "<:onion:1269049565542355075> Onion",
+            "Chopped Pepper": "<:spicy_pepper:1269051172245999616> Spicy Pepper",
+            "Chopped Mushroom": "<:mushroom:1269053592388763850>  Mushroom",
+            "Proschapaa": "<:chapaa_meat:1269053848429920447> Chapaa Meat, <:salt:1269053968546402326> Salt", 
+            "Cornmeal": "<:corn:1269051443239714877> Corn",
             "Dough": "<:wheat:1269044256635355182> Wheat",
-            "Rolled Dough": ":butter: Butter, :salt: Salt",
-            "Duxelles": ":salt: Salt",
-            "Unbaked Muujin": ":egg: Egg"
+            "Rolled Dough": "<:butter:1269046608465760257> Butter, <:salt:1269053968546402326> Salt",
+            "Duxelles": "<:salt:1269053968546402326> Salt",
+            "Unbaked Muujin": "<:egg:1269050060684136478> Egg"
         },
         "Image": "https://palia.wiki.gg/images/thumb/c/cb/Currency_Cooking.png",
         "Type": "Cooking Parties"
