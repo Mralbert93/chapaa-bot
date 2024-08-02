@@ -155,7 +155,7 @@ PartyTypeInfo = {
         },
         "Ingredients": {
         },
-        "Image": "https://palia.wiki.gg/images/thumb/6/68/Palia_LNY_HotPot_Soup.jpg/600px-Palia_LNY_HotPot_Soup.jpg",
+        "Image": "https://palia.wiki.gg/images/b/b3/Hotpot_Noodle_Category.png",
         "Type": "Hotpot Parties",
         "DisplayQuantity": False
     },
