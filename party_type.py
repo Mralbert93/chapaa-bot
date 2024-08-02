@@ -71,7 +71,7 @@ PartyTypeInfo = {
             "Batter": "<:butter:1269046608465760257> Butter, <:egg:1269050060684136478> Eggs, <:flour:1168232067197317130> Flour",
             "Froster": "<:milk:1269050758666522767> Milk, <:butter:1269046608465760257> Butter",
             "Leafer": "<:sweet_leaf:1269047572098711582> Sweet Leaves",
-            "Fruit Froster": "<:apple:1269047161472155798> Any Fruit, <:sugar:1171830932513234974> Sugar",
+            "Fruit Froster": "<:apple:1269047161472155798> Any Fruit, <:sugar:1269055815097127066> Sugar",
             "Flexible": "Ingredients TBD"
         },
         "Image": "https://palia.wiki.gg/images/8/81/Celebration_Cake.png",
