@@ -62,7 +62,8 @@ PartyTypeInfo = {
             "Froster": ["Open"],
             "Leafer": ["Open"] * 4,
             "Fruit Froster": ["Open"] * 3,
-            "Oven/Spreader": ["Open"] * 3,
+            "Oven": ["Open"] * 3,
+            "Spreader": ["Open"] * 3,
             "Flexible": ["Open"] * 4
         },
         "Ingredients": {
@@ -143,6 +144,19 @@ PartyTypeInfo = {
         },
         "Image": "https://palia.wiki.gg/images/thumb/b/b0/Currency_Foraging.png/75px-Currency_Foraging.png",
         "Type": "Foraging Parties",
+        "DisplayQuantity": False
+    },
+    "Hotpot": {
+        "Aliases": ["hotpot"],
+        "Roles": {
+            "Table 1": ["Open"]*4,
+            "Table 2": ["Open"]*4,
+            "Table 3": ["Open"]*4
+        },
+        "Ingredients": {
+        },
+        "Image": "https://palia.wiki.gg/images/thumb/6/68/Palia_LNY_HotPot_Soup.jpg/600px-Palia_LNY_HotPot_Soup.jpg",
+        "Type": "Hotpot Parties",
         "DisplayQuantity": False
     },
     "Hunting": {
