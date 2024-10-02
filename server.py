@@ -166,6 +166,18 @@ async def types(ctx: SlashContext):
 
 # Command create
 @slash_command(
+        name="ping",
+        description="Ping Lil Simp (Administrators only)",
+)
+
+async def create(ctx: SlashContext):
+    if ctx.author.guild_permissions.administrator:
+        await ctx.send(f"<@&1156819064170229861>")
+    else:
+        await ctx.send("You do not have permission to use this command.", ephemeral=True)
+
+# Command create
+@slash_command(
         name="party",
         description="Used to manage Palia parties",
         sub_cmd_name="create",
