@@ -138,15 +138,6 @@ async def edit_message(self, ctx, message_id: int):
     ]
     await message.edit(embed=embed,components=components)
 
-# Command ping
-@slash_command(
-        name="ping",
-        description="Ping Lil Simp (Administrators only)",
-)
-
-async def ping(ctx: SlashContext):
-    await ctx.send(f"<@&1156819064170229861>")
-
 # Command party types
 @slash_command(
         name="party",
