@@ -145,10 +145,7 @@ async def edit_message(self, ctx, message_id: int):
 )
 
 async def ping(ctx: SlashContext):
-    if ctx.author.guild_permissions.administrator:
-        await ctx.send(f"<@&1156819064170229861>")
-    else:
-        await ctx.send("<@{ctx.author.id}>, you do not have permission to use this command.", ephemeral=True)
+    await ctx.send(f"<@&1156819064170229861>")
 
 # Command party types
 @slash_command(
